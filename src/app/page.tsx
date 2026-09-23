@@ -1,4 +1,5 @@
 import Calculator from "@/components/Calculator";
+import Faq from "@/components/Faq";
 import Hero from "@/components/Hero";
 import HowItWorks from "@/components/HowItWorks";
 
@@ -13,6 +14,7 @@ export default function Home() {
             </main>
 
             <HowItWorks />
+            <Faq />
         </div>
     );
 }
