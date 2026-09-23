@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { calculateEstimate } from "@/lib/calculator";
 import { questions } from "@/lib/questions";
 import { Answer, EstimateResult } from "@/lib/types";
 
@@ -73,6 +74,34 @@ export default function Calculator() {
                     </fieldset>
                 );
             })}
+
+            <button type="button" onClick={() => setResult(calculateEstimate(answers))}>
+                Calculate estimate
+            </button>
+
+            {result && (
+                <div>
+                    <h2>Estimate</h2>
+                    <p>Development hours: {result.developmentHours}</p>
+                    <ul>
+                        {result.workstreamBreakdown.map((item) => (
+                            <li key={item.name}>
+                                {item.name}: {item.hours}h
+                            </li>
+                        ))}
+                    </ul>
+                    <p>QA allowance: {result.qaAllowanceHours}h</p>
+                    <p>PM allowance: {result.pmAllowanceHours}h</p>
+                    <p>Deployment: {result.deploymentHours}h</p>
+                    <p>Risk reserve: {result.riskReserveHours}h</p>
+                    <p>Confidence level: {result.confidenceLevel}</p>
+                    <ul>
+                        {result.assumptions.map((assumption) => (
+                            <li key={assumption}>{assumption}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 }
