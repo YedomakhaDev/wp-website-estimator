@@ -11,7 +11,7 @@ export default function Home() {
                     Answer a few questions and get a development estimate for your
                     WordPress project.
                 </p>
-                <div className="mt-10">
+                <div id="calculator" className="mt-10">
                     <Calculator />
                 </div>
             </main>
