@@ -95,26 +95,54 @@ export default function Calculator() {
             </button>
 
             {result && (
-                <div>
-                    <h2>Estimate</h2>
-                    <p>Development hours: {result.developmentHours}</p>
-                    <ul>
+                <div className="space-y-4 border-t border-border pt-6">
+                    <div>
+                        <p className="text-sm text-muted-foreground">Estimated development hours</p>
+                        <p className="text-3xl font-bold tracking-tight text-foreground">
+                            {result.developmentHours}h
+                        </p>
+                    </div>
+
+                    <div className="divide-y divide-border rounded-control border border-border text-sm">
                         {result.workstreamBreakdown.map((item) => (
-                            <li key={item.name}>
-                                {item.name}: {item.hours}h
-                            </li>
+                            <div key={item.name} className="flex justify-between px-3 py-2">
+                                <span className="text-foreground">{item.name}</span>
+                                <span className="text-muted-foreground">{item.hours}h</span>
+                            </div>
                         ))}
-                    </ul>
-                    <p>QA allowance: {result.qaAllowanceHours}h</p>
-                    <p>PM allowance: {result.pmAllowanceHours}h</p>
-                    <p>Deployment: {result.deploymentHours}h</p>
-                    <p>Risk reserve: {result.riskReserveHours}h</p>
-                    <p>Confidence level: {result.confidenceLevel}</p>
-                    <ul>
-                        {result.assumptions.map((assumption) => (
-                            <li key={assumption}>{assumption}</li>
-                        ))}
-                    </ul>
+                        <div className="flex justify-between px-3 py-2">
+                            <span className="text-foreground">QA & fixes</span>
+                            <span className="text-muted-foreground">{result.qaAllowanceHours}h</span>
+                        </div>
+                        <div className="flex justify-between px-3 py-2">
+                            <span className="text-foreground">PM & communication</span>
+                            <span className="text-muted-foreground">{result.pmAllowanceHours}h</span>
+                        </div>
+                        <div className="flex justify-between px-3 py-2">
+                            <span className="text-foreground">Deployment</span>
+                            <span className="text-muted-foreground">{result.deploymentHours}h</span>
+                        </div>
+                        <div className="flex justify-between px-3 py-2">
+                            <span className="text-foreground">Risk reserve</span>
+                            <span className="text-muted-foreground">{result.riskReserveHours}h</span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">Confidence:</span>
+                        <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary">
+                            {result.confidenceLevel}
+                        </span>
+                    </div>
+
+                    <div>
+                        <p className="text-sm font-medium text-foreground">Assumptions</p>
+                        <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                            {result.assumptions.map((assumption) => (
+                                <li key={assumption}>{assumption}</li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             )}
         </div>
