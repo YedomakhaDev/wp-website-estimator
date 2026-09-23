@@ -21,56 +21,67 @@ export default function Calculator() {
     }
 
     return (
-        <div>
+        <div className="space-y-6 rounded-card border border-border bg-surface p-6 shadow-sm">
             {questions.map((question) => {
                 const currentValue = getAnswerValue(question.id);
 
                 return (
-                    <fieldset key={question.id}>
-                        <legend>{question.label}</legend>
+                    <fieldset key={question.id} className="border-0 p-0">
+                        <legend className="text-sm font-medium text-foreground">
+                            {question.label}
+                        </legend>
 
-                        {question.type === "single-choice" &&
-                            question.options?.map((option) => (
-                                <label key={option.value}>
-                                    <input
-                                        type="radio"
-                                        name={question.id}
-                                        checked={currentValue === option.value}
-                                        onChange={() => setAnswer(question.id, option.value)}
-                                    />
-                                    {option.label}
-                                </label>
-                            ))}
-
-                        {question.type === "multi-choice" &&
-                            question.options?.map((option) => {
-                                const selected = Array.isArray(currentValue) ? currentValue : [];
-                                const isChecked = selected.includes(option.value);
-
-                                return (
-                                    <label key={option.value}>
+                        <div className="mt-2 space-y-2">
+                            {question.type === "single-choice" &&
+                                question.options?.map((option) => (
+                                    <label
+                                        key={option.value}
+                                        className="flex items-center gap-2 text-sm text-foreground"
+                                    >
                                         <input
-                                            type="checkbox"
-                                            checked={isChecked}
-                                            onChange={() => {
-                                                const nextValue = isChecked
-                                                    ? selected.filter((value) => value !== option.value)
-                                                    : [...selected, option.value];
-                                                setAnswer(question.id, nextValue);
-                                            }}
+                                            type="radio"
+                                            name={question.id}
+                                            checked={currentValue === option.value}
+                                            onChange={() => setAnswer(question.id, option.value)}
                                         />
                                         {option.label}
                                     </label>
-                                );
-                            })}
+                                ))}
 
-                        {question.type === "number" && (
-                            <input
-                                type="number"
-                                value={typeof currentValue === "number" ? currentValue : ""}
-                                onChange={(event) => setAnswer(question.id, Number(event.target.value))}
-                            />
-                        )}
+                            {question.type === "multi-choice" &&
+                                question.options?.map((option) => {
+                                    const selected = Array.isArray(currentValue) ? currentValue : [];
+                                    const isChecked = selected.includes(option.value);
+
+                                    return (
+                                        <label
+                                            key={option.value}
+                                            className="flex items-center gap-2 text-sm text-foreground"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={isChecked}
+                                                onChange={() => {
+                                                    const nextValue = isChecked
+                                                        ? selected.filter((value) => value !== option.value)
+                                                        : [...selected, option.value];
+                                                    setAnswer(question.id, nextValue);
+                                                }}
+                                            />
+                                            {option.label}
+                                        </label>
+                                    );
+                                })}
+
+                            {question.type === "number" && (
+                                <input
+                                    type="number"
+                                    value={typeof currentValue === "number" ? currentValue : ""}
+                                    onChange={(event) => setAnswer(question.id, Number(event.target.value))}
+                                    className="w-full rounded-control border border-border px-3 py-2 text-sm text-foreground"
+                                />
+                            )}
+                        </div>
                     </fieldset>
                 );
             })}
