@@ -11,6 +11,7 @@
   --primary-subtle: #eef2ff;
   --radius-card: 1rem;
   --radius-control: 0.5rem;
+  --container-content: 76rem;
 }
 
 @theme inline {
@@ -24,6 +25,7 @@
   --color-primary-subtle: var(--primary-subtle);
   --radius-card: var(--radius-card);
   --radius-control: var(--radius-control);
+  --container-content: var(--container-content);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
