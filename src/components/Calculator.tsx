@@ -320,7 +320,7 @@ export default function Calculator() {
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <span className="text-sm text-muted-foreground">Confidence:</span>
+                            <span className="text-sm text-muted-foreground">Scope confidence:</span>
                             <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary">
                                 {result.estimate.confidenceLevel}
                             </span>
@@ -328,6 +328,10 @@ export default function Calculator() {
                                 (risk reserve {Math.round(result.estimate.riskReservePercent)}%)
                             </span>
                         </div>
+                        <p className="text-xs text-muted-foreground">
+                            Reflects how well-defined your answers are, not a guarantee of the hour range&apos;s
+                            accuracy.
+                        </p>
 
                         {result.estimate.discoveryRecommendation && (
                             <div className="rounded-control border border-warning/30 bg-warning-subtle p-3 text-sm text-warning">
