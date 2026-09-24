@@ -9,6 +9,10 @@
   --primary: #4f46e5;
   --primary-foreground: #ffffff;
   --primary-subtle: #eef2ff;
+  --success: #16a34a;
+  --success-subtle: #f0fdf4;
+  --warning: #b45309;
+  --warning-subtle: #fffbeb;
   --radius-card: 1rem;
   --radius-control: 0.5rem;
   --container-content: 76rem;
@@ -23,6 +27,10 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-subtle: var(--primary-subtle);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
   --radius-card: var(--radius-card);
   --radius-control: var(--radius-control);
   --container-content: var(--container-content);

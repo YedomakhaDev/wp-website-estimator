@@ -149,8 +149,41 @@ function findOption(question: Question, value: string): QuestionOption | undefin
     return question.options.find((option) => option.value === value);
 }
 
-function isVisible(question: Question, answers: AnswerMap): boolean {
+export function isVisible(question: Question, answers: AnswerMap): boolean {
     return question.visibleIf ? question.visibleIf(answers) : true;
+}
+
+export function isStepVisible(step: Step, answers: AnswerMap): boolean {
+    return step.visibleIf ? step.visibleIf(answers) : true;
+}
+
+// A question counts as "answered" once it has been touched at all, even if a
+// multi-choice ends up with zero selections — that's a deliberate "none of
+// these" answer, distinct from never having looked at the question.
+export function isQuestionAnswered(question: Question, answers: AnswerMap): boolean {
+    return answers[question.id] !== undefined;
+}
+
+export function isStepComplete(step: Step, answers: AnswerMap): boolean {
+    const visibleQuestions = step.questions.filter((question) => isVisible(question, answers));
+    if (visibleQuestions.length === 0) return true;
+    return visibleQuestions.every((question) => isQuestionAnswered(question, answers));
+}
+
+export function getQuestionnaireProgress(steps: Step[], answers: AnswerMap): { answered: number; total: number } {
+    let answered = 0;
+    let total = 0;
+
+    for (const step of steps) {
+        if (!isStepVisible(step, answers)) continue;
+        for (const question of step.questions) {
+            if (!isVisible(question, answers)) continue;
+            total += 1;
+            if (isQuestionAnswered(question, answers)) answered += 1;
+        }
+    }
+
+    return { answered, total };
 }
 
 function getMultiplier(
@@ -258,7 +291,7 @@ function processSteps(steps: Step[], answers: AnswerMap): EngineState {
     };
 
     for (const step of steps) {
-        if (step.visibleIf && !step.visibleIf(answers)) continue;
+        if (!isStepVisible(step, answers)) continue;
 
         for (const question of step.questions) {
             if (!isVisible(question, answers)) continue;
