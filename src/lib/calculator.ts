@@ -89,6 +89,22 @@ function needsOptionsPage(answers: AnswerMap): boolean {
     return getQuantity(answers, "cpt_count", "count") > 0 || answers.build_approach === "custom_acf";
 }
 
+// Base store/booking-engine templates are billed automatically once the project
+// type calls for them — not tied to a single answer option.
+const WOO_BASE_HOURS: HourRange = { min: 24, max: 36 };
+const BOOKING_BASE_HOURS: HourRange = { min: 20, max: 30 };
+
+function applyAutomaticBases(state: EngineState, answers: AnswerMap): void {
+    if (answers.project_type === "woocommerce") {
+        state.buckets.woo = addRange(state.buckets.woo, WOO_BASE_HOURS);
+        state.assumptions.push("WooCommerce — base store templates: included");
+    }
+    if (answers.project_type === "booking") {
+        state.buckets.booking = addRange(state.buckets.booking, BOOKING_BASE_HOURS);
+        state.assumptions.push("Booking — base booking engine: included");
+    }
+}
+
 // ACF and native Gutenberg builds get the full CMS/data step (including editor_flexibility);
 // page builder and ready-made theme builds only see cpt_count. Exported so questions.ts can
 // reuse it for visibleIf — a single source of truth keeps a stale editor_flexibility answer
@@ -211,6 +227,8 @@ function processSteps(steps: Step[], answers: AnswerMap): EngineState {
     };
 
     for (const step of steps) {
+        if (step.visibleIf && !step.visibleIf(answers)) continue;
+
         for (const question of step.questions) {
             if (!isVisible(question, answers)) continue;
 
@@ -320,6 +338,8 @@ export function calculateEstimate(steps: Step[], answers: AnswerMap): Calculatio
     if (state.stop) {
         return { status: "stop", message: state.stop };
     }
+
+    applyAutomaticBases(state, answers);
 
     if (needsOptionsPage(answers)) {
         state.buckets.cms = addRange(state.buckets.cms, OPTIONS_PAGE_HOURS);

@@ -95,6 +95,7 @@ export type Step = {
     id: string;
     title: string;
     questions: Question[];
+    visibleIf?: VisibleIf;
 };
 
 // ---- Result ----

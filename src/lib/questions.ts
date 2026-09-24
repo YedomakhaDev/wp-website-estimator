@@ -488,4 +488,190 @@ export const steps: Step[] = [
             },
         ],
     },
+    {
+        id: "woocommerce",
+        title: "WooCommerce",
+        visibleIf: (answers) => answers.project_type === "woocommerce",
+        questions: [
+            {
+                id: "product_types",
+                label: "Products",
+                type: "single-choice",
+                options: [
+                    { value: "simple_only", label: "Simple products only" },
+                    {
+                        value: "has_variable",
+                        label: "Includes variable products",
+                        effect: { bucket: "woo", hours: { min: 4, max: 8 } },
+                    },
+                ],
+            },
+            {
+                id: "checkout_level",
+                label: "Checkout",
+                type: "single-choice",
+                options: [
+                    { value: "standard", label: "Standard" },
+                    {
+                        value: "light_custom",
+                        label: "Light customization",
+                        effect: { bucket: "woo", hours: { min: 6, max: 10 } },
+                    },
+                    {
+                        value: "custom_logic",
+                        label: "Custom logic",
+                        effect: {
+                            bucket: "woo",
+                            hours: { min: 20, max: 35 },
+                            risk: [{ axis: "execution", points: 2 }],
+                        },
+                    },
+                ],
+            },
+            {
+                id: "payments",
+                label: "Payment gateways",
+                type: "quantity",
+                fields: [
+                    {
+                        id: "standard",
+                        label: "Standard gateways",
+                        bucket: "woo",
+                        hoursPerUnit: { min: 3, max: 5 },
+                    },
+                    {
+                        id: "local",
+                        label: "Local gateways",
+                        bucket: "woo",
+                        hoursPerUnit: { min: 8, max: 14 },
+                    },
+                ],
+            },
+            {
+                id: "shipping_level",
+                label: "Shipping",
+                type: "single-choice",
+                options: [
+                    {
+                        value: "simple",
+                        label: "Simple",
+                        effect: { bucket: "woo", hours: { min: 3, max: 6 } },
+                    },
+                    {
+                        value: "courier_api",
+                        label: "Courier API / table-rate",
+                        effect: {
+                            bucket: "woo",
+                            hours: { min: 16, max: 28 },
+                            risk: [{ axis: "execution", points: 1 }],
+                        },
+                    },
+                ],
+            },
+            {
+                id: "woo_extensions",
+                label: "Extensions",
+                type: "multi-choice",
+                options: [
+                    {
+                        value: "subscriptions",
+                        label: "Subscriptions",
+                        effect: { bucket: "woo", hours: { min: 16, max: 35 } },
+                    },
+                    {
+                        value: "b2b",
+                        label: "B2B / wholesale",
+                        effect: { bucket: "woo", hours: { min: 16, max: 35 } },
+                    },
+                    {
+                        value: "bookings",
+                        label: "Bookings",
+                        effect: { bucket: "woo", hours: { min: 16, max: 35 } },
+                    },
+                    {
+                        value: "bundles",
+                        label: "Bundles",
+                        effect: { bucket: "woo", hours: { min: 16, max: 35 } },
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        id: "booking",
+        title: "Booking",
+        visibleIf: (answers) => answers.project_type === "booking",
+        questions: [
+            {
+                id: "booking_resource_type",
+                label: "Resource type",
+                type: "single-choice",
+                options: [
+                    { value: "single_slot", label: "One slot type (one specialist/object)" },
+                    {
+                        value: "multi_resource",
+                        label: "Several resources with independent schedules",
+                        effect: { bucket: "booking", hours: { min: 10, max: 18 } },
+                    },
+                    {
+                        value: "group_booking",
+                        label: "Group bookings (capacity limit per slot)",
+                        effect: {
+                            bucket: "booking",
+                            hours: { min: 14, max: 24 },
+                            risk: [{ axis: "execution", points: 1 }],
+                        },
+                    },
+                ],
+            },
+            {
+                id: "booking_payment",
+                label: "Payment at booking time",
+                type: "single-choice",
+                options: [
+                    { value: "no_prepay", label: "No prepayment" },
+                    {
+                        value: "prepay_deposit",
+                        label: "Prepayment or deposit",
+                        effect: { bucket: "booking", hours: { min: 6, max: 10 } },
+                    },
+                ],
+            },
+            {
+                id: "booking_changes",
+                label: "Cancellation and rescheduling",
+                type: "single-choice",
+                options: [
+                    { value: "none", label: "None" },
+                    {
+                        value: "policy",
+                        label: "Yes, with a policy (deadlines, penalties)",
+                        effect: {
+                            bucket: "booking",
+                            hours: { min: 6, max: 12 },
+                            risk: [{ axis: "execution", points: 1 }],
+                        },
+                    },
+                ],
+            },
+            {
+                id: "booking_notifications",
+                label: "Reminders",
+                type: "single-choice",
+                options: [
+                    { value: "none", label: "None" },
+                    {
+                        value: "email",
+                        label: "Email",
+                        effect: { bucket: "booking", hours: { min: 3, max: 5 } },
+                    },
+                    {
+                        value: "email_sms",
+                        label: "Email + SMS",
+                        effect: { bucket: "booking", hours: { min: 8, max: 14 } },
+                    },
+                ],
+            },
+        ],
+    },
 ];
