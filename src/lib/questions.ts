@@ -674,4 +674,106 @@ export const steps: Step[] = [
             },
         ],
     },
+    {
+        id: "integrations",
+        title: "Integrations",
+        questions: [
+            {
+                id: "integrations",
+                label: "Integrations",
+                type: "quantity",
+                fields: [
+                    {
+                        id: "plugin",
+                        label: "Via a ready-made plugin",
+                        bucket: "integrations",
+                        hoursPerUnit: { min: 3, max: 6 },
+                        riskPerUnit: { axis: "execution", points: 1, cappedCategory: "integrations" },
+                    },
+                    {
+                        id: "one_way",
+                        label: "One-way API",
+                        bucket: "integrations",
+                        hoursPerUnit: { min: 12, max: 20 },
+                        riskPerUnit: { axis: "execution", points: 1, cappedCategory: "integrations" },
+                    },
+                    {
+                        id: "two_way",
+                        label: "Two-way sync",
+                        bucket: "integrations",
+                        hoursPerUnit: { min: 30, max: 50 },
+                        riskPerUnit: { axis: "execution", points: 1, cappedCategory: "integrations" },
+                    },
+                ],
+            },
+            {
+                id: "integrations_docs",
+                label: "API documentation quality",
+                type: "single-choice",
+                options: [
+                    { value: "normal", label: "Normal" },
+                    {
+                        value: "poor_unknown",
+                        label: "Poor or unknown",
+                        effect: { risk: [{ axis: "execution", points: 2 }] },
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        id: "i18n",
+        title: "Multilingual",
+        questions: [
+            {
+                id: "languages",
+                label: "Languages",
+                type: "single-choice",
+                options: [
+                    { value: "one", label: "1" },
+                    {
+                        value: "two",
+                        label: "2",
+                        effect: {
+                            bucket: "i18n",
+                            hours: { min: 8, max: 12 },
+                            risk: [{ axis: "execution", points: 1 }],
+                        },
+                    },
+                    {
+                        value: "few",
+                        label: "3–4",
+                        effect: {
+                            bucket: "i18n",
+                            hours: { min: 8, max: 12 },
+                            risk: [{ axis: "execution", points: 1 }],
+                        },
+                    },
+                    {
+                        value: "many",
+                        label: "5+",
+                        effect: {
+                            bucket: "i18n",
+                            hours: { min: 8, max: 12 },
+                            risk: [{ axis: "execution", points: 1 }],
+                        },
+                    },
+                ],
+            },
+            {
+                id: "rtl",
+                label: "RTL languages",
+                type: "single-choice",
+                visibleIf: (answers) => answers.languages === "two" || answers.languages === "few" || answers.languages === "many",
+                options: [
+                    { value: "no", label: "No" },
+                    {
+                        value: "yes",
+                        label: "Yes",
+                        effect: { bucket: "i18n", hours: { min: 8, max: 14 } },
+                    },
+                ],
+            },
+        ],
+    },
 ];

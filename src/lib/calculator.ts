@@ -105,6 +105,31 @@ function applyAutomaticBases(state: EngineState, answers: AnswerMap): void {
     }
 }
 
+// Poor API docs bump only the "API" integrations (one-way + two-way), not the
+// plugin-based ones, from 1x to 1.5x, plus a flat discovery spike. The generic
+// engine already added the 1x base for all three fields, so this tops it up
+// by the extra 0.5x rather than recomputing the whole bucket from scratch.
+const INTEGRATION_ONE_WAY_RATE: HourRange = { min: 12, max: 20 };
+const INTEGRATION_TWO_WAY_RATE: HourRange = { min: 30, max: 50 };
+const INTEGRATION_DOCS_SPIKE: HourRange = { min: 8, max: 12 };
+
+function applyIntegrationsDocsPenalty(state: EngineState, answers: AnswerMap): void {
+    if (answers.integrations_docs !== "poor_unknown") return;
+
+    const oneWay = getQuantity(answers, "integrations", "one_way");
+    const twoWay = getQuantity(answers, "integrations", "two_way");
+    const apiHours = addRange(
+        scaleRange(INTEGRATION_ONE_WAY_RATE, oneWay),
+        scaleRange(INTEGRATION_TWO_WAY_RATE, twoWay),
+    );
+
+    state.buckets.integrations = addRange(
+        state.buckets.integrations,
+        addRange(scaleRange(apiHours, 0.5), INTEGRATION_DOCS_SPIKE),
+    );
+    state.assumptions.push("Integrations — API docs are poor or unknown: +50% on API integrations, plus a discovery spike");
+}
+
 // ACF and native Gutenberg builds get the full CMS/data step (including editor_flexibility);
 // page builder and ready-made theme builds only see cpt_count. Exported so questions.ts can
 // reuse it for visibleIf — a single source of truth keeps a stale editor_flexibility answer
@@ -340,6 +365,7 @@ export function calculateEstimate(steps: Step[], answers: AnswerMap): Calculatio
     }
 
     applyAutomaticBases(state, answers);
+    applyIntegrationsDocsPenalty(state, answers);
 
     if (needsOptionsPage(answers)) {
         state.buckets.cms = addRange(state.buckets.cms, OPTIONS_PAGE_HOURS);
