@@ -603,6 +603,20 @@ export const steps: Step[] = [
         visibleIf: (answers) => answers.project_type === "booking",
         questions: [
             {
+                id: "booking_build_approach",
+                label: "How is booking implemented?",
+                type: "single-choice",
+                options: [
+                    { value: "plugin_config", label: "Existing plugin, standard configuration" },
+                    { value: "plugin_customization", label: "Existing plugin, heavily customized" },
+                    {
+                        value: "custom_logic",
+                        label: "Fully custom booking logic",
+                        effect: { risk: [{ axis: "execution", points: 1 }] },
+                    },
+                ],
+            },
+            {
                 id: "booking_resource_type",
                 label: "Resource type",
                 type: "single-choice",

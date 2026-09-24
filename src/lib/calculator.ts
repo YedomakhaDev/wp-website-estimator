@@ -65,6 +65,15 @@ const LANGUAGE_MULTIPLIER: Record<string, number> = {
     many: 1.4,
 };
 
+// The booking base + feature hours implicitly assumed "existing plugin,
+// customized" effort — plugin_customization is the ×1.0 baseline on purpose,
+// so scenarios written before this question existed don't silently change.
+const BOOKING_BUILD_MULTIPLIER: Record<string, number> = {
+    plugin_config: 0.5,
+    plugin_customization: 1.0,
+    custom_logic: 1.6,
+};
+
 // Price per unique block/section depends on how the site is built (step 2),
 // so unique_blocks reads this instead of a fixed rate.
 const BUILD_APPROACH_BLOCK_PRICE: Record<string, HourRange> = {
@@ -405,6 +414,9 @@ export function calculateEstimate(steps: Step[], answers: AnswerMap): Calculatio
 
     applyAutomaticBases(state, answers);
     applyIntegrationsDocsPenalty(state, answers);
+
+    const bookingBuildMultiplier = getMultiplier(answers, "booking_build_approach", BOOKING_BUILD_MULTIPLIER, 1.0);
+    state.buckets.booking = scaleRange(state.buckets.booking, bookingBuildMultiplier);
 
     if (needsOptionsPage(answers)) {
         state.buckets.cms = addRange(state.buckets.cms, OPTIONS_PAGE_HOURS);
