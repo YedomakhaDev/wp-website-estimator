@@ -26,7 +26,6 @@ export default function Calculator() {
 
                     {step.questions.map((question) => {
                         if (question.visibleIf && !question.visibleIf(answers)) return null;
-                        if (question.type !== "single-choice" && question.type !== "multi-choice") return null;
 
                         const currentValue = answers[question.id];
 
@@ -72,6 +71,38 @@ export default function Calculator() {
                                                         }}
                                                     />
                                                     {option.label}
+                                                </label>
+                                            );
+                                        })}
+
+                                    {question.type === "quantity" &&
+                                        question.fields.map((field) => {
+                                            const quantities =
+                                                currentValue &&
+                                                typeof currentValue === "object" &&
+                                                !Array.isArray(currentValue)
+                                                    ? currentValue
+                                                    : {};
+                                            const fieldValue = quantities[field.id] ?? 0;
+
+                                            return (
+                                                <label
+                                                    key={field.id}
+                                                    className="flex items-center justify-between gap-2 text-sm text-foreground"
+                                                >
+                                                    <span>{field.label}</span>
+                                                    <input
+                                                        type="number"
+                                                        min={0}
+                                                        value={fieldValue}
+                                                        onChange={(event) =>
+                                                            setAnswer(question.id, {
+                                                                ...quantities,
+                                                                [field.id]: Number(event.target.value),
+                                                            })
+                                                        }
+                                                        className="w-24 rounded-control border border-border px-3 py-2 text-sm text-foreground"
+                                                    />
                                                 </label>
                                             );
                                         })}

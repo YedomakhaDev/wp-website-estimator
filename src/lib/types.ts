@@ -16,6 +16,7 @@ export type RiskContribution = {
 // Named accumulators the calculation pipeline sums hours into.
 // Mirrors the workstream blocks shown in the result breakdown.
 export type Bucket =
+    | "buildSetup"
     | "frontendComponents"
     | "frontendBlocks"
     | "frontendTemplates"
@@ -36,8 +37,6 @@ export type Bucket =
 export type Effect = {
     bucket?: Bucket;
     hours?: HourRange;
-    // Multiplies the running subtotal of a bucket (design_complexity, editor_flexibility).
-    multiplier?: number;
     // Additive percentage bump applied once to the whole frontend subtotal
     // at the end (pixel_perfect, accessibility_level, desktop-only design).
     frontendPercent?: number;

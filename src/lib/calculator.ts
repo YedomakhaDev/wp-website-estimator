@@ -59,6 +59,22 @@ const LANGUAGE_MULTIPLIER: Record<string, number> = {
     many: 1.4,
 };
 
+// Price per unique block/section depends on how the site is built (step 2),
+// so unique_blocks reads this instead of a fixed rate.
+const BUILD_APPROACH_BLOCK_PRICE: Record<string, HourRange> = {
+    page_builder: { min: 1, max: 2 },
+    theme_child: { min: 1, max: 2 },
+    custom_acf: { min: 3, max: 4 },
+    native_gutenberg: { min: 4, max: 6 },
+};
+const DEFAULT_BLOCK_PRICE: HourRange = { min: 2, max: 3 };
+
+export function blockPriceFor(answers: AnswerMap): HourRange {
+    const buildApproach = answers.build_approach;
+    if (typeof buildApproach !== "string") return DEFAULT_BLOCK_PRICE;
+    return BUILD_APPROACH_BLOCK_PRICE[buildApproach] ?? DEFAULT_BLOCK_PRICE;
+}
+
 function findOption(question: Question, value: string): QuestionOption | undefined {
     if (question.type === "quantity") return undefined;
     return question.options.find((option) => option.value === value);
@@ -81,6 +97,7 @@ function getMultiplier(
 
 function emptyBuckets(): Record<Bucket, HourRange> {
     return {
+        buildSetup: ZERO,
         frontendComponents: FRONTEND_COMPONENTS_BASE,
         frontendBlocks: ZERO,
         frontendTemplates: ZERO,
@@ -233,10 +250,11 @@ function buildFrontendFinal(state: EngineState, answers: AnswerMap): HourRange {
         designComplexity,
     );
     const blocks = scaleRange(state.buckets.frontendBlocks, designComplexity * editorFlexibility);
-    const raw = addRange(
-        addRange(componentsAndTemplates, blocks),
+    const unmultiplied = addRange(
         addRange(state.buckets.frontendHeader, state.buckets.frontendAnimations),
+        state.buckets.buildSetup,
     );
+    const raw = addRange(addRange(componentsAndTemplates, blocks), unmultiplied);
 
     return scaleRange(raw, 1 + state.frontendPercentTotal);
 }
