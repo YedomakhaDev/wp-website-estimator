@@ -75,6 +75,28 @@ export function blockPriceFor(answers: AnswerMap): HourRange {
     return BUILD_APPROACH_BLOCK_PRICE[buildApproach] ?? DEFAULT_BLOCK_PRICE;
 }
 
+// A global Options Page is billed automatically once the site has any CMS data
+// (a CPT, or an ACF-driven build) to manage — not tied to a single question.
+const OPTIONS_PAGE_HOURS: HourRange = { min: 2, max: 3 };
+
+function getQuantity(answers: AnswerMap, questionId: string, fieldId: string): number {
+    const value = answers[questionId];
+    if (!value || typeof value !== "object" || Array.isArray(value)) return 0;
+    return value[fieldId] ?? 0;
+}
+
+function needsOptionsPage(answers: AnswerMap): boolean {
+    return getQuantity(answers, "cpt_count", "count") > 0 || answers.build_approach === "custom_acf";
+}
+
+// ACF and native Gutenberg builds get the full CMS/data step (including editor_flexibility);
+// page builder and ready-made theme builds only see cpt_count. Exported so questions.ts can
+// reuse it for visibleIf — a single source of truth keeps a stale editor_flexibility answer
+// (left over from switching build_approach) from silently leaking into the multiplier below.
+export function isFullCmsBuild(answers: AnswerMap): boolean {
+    return answers.build_approach === "custom_acf" || answers.build_approach === "native_gutenberg";
+}
+
 function findOption(question: Question, value: string): QuestionOption | undefined {
     if (question.type === "quantity") return undefined;
     return question.options.find((option) => option.value === value);
@@ -243,7 +265,9 @@ function tallyRiskAxis(entries: RiskContribution[], axis: RiskAxis): number {
 // plan for why this needs an explicit pipeline instead of generic per-option multipliers.
 function buildFrontendFinal(state: EngineState, answers: AnswerMap): HourRange {
     const designComplexity = getMultiplier(answers, "design_complexity", DESIGN_COMPLEXITY_MULTIPLIER, 1.0);
-    const editorFlexibility = getMultiplier(answers, "editor_flexibility", EDITOR_FLEXIBILITY_MULTIPLIER, 1.0);
+    const editorFlexibility = isFullCmsBuild(answers)
+        ? getMultiplier(answers, "editor_flexibility", EDITOR_FLEXIBILITY_MULTIPLIER, 1.0)
+        : 1.0;
 
     const componentsAndTemplates = scaleRange(
         addRange(state.buckets.frontendComponents, state.buckets.frontendTemplates),
@@ -295,6 +319,11 @@ export function calculateEstimate(steps: Step[], answers: AnswerMap): Calculatio
 
     if (state.stop) {
         return { status: "stop", message: state.stop };
+    }
+
+    if (needsOptionsPage(answers)) {
+        state.buckets.cms = addRange(state.buckets.cms, OPTIONS_PAGE_HOURS);
+        state.assumptions.push("CMS & data — Options page: included (CPT or ACF present)");
     }
 
     const frontendFinal = buildFrontendFinal(state, answers);

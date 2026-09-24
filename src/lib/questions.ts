@@ -1,4 +1,4 @@
-import { blockPriceFor } from "./calculator";
+import { blockPriceFor, isFullCmsBuild } from "./calculator";
 import { Step } from "./types";
 
 // Level-mode questionnaire. Steps are added incrementally —
@@ -282,6 +282,207 @@ export const steps: Step[] = [
                         value: "yes",
                         label: "Yes",
                         effect: { frontendPercent: 0.1, risk: [{ axis: "execution", points: 1 }] },
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        id: "cms",
+        title: "CMS & data",
+        questions: [
+            {
+                id: "cpt_count",
+                label: "Custom Post Types",
+                type: "quantity",
+                fields: [
+                    {
+                        id: "count",
+                        label: "CPTs",
+                        bucket: "cms",
+                        hoursPerUnit: { min: 3, max: 5 },
+                    },
+                ],
+            },
+            {
+                id: "taxonomy_count",
+                label: "Taxonomies",
+                type: "quantity",
+                visibleIf: isFullCmsBuild,
+                fields: [
+                    {
+                        id: "count",
+                        label: "Taxonomies",
+                        bucket: "cms",
+                        hoursPerUnit: { min: 1, max: 1.5 },
+                    },
+                ],
+            },
+            {
+                id: "relations",
+                label: "Relations between entries",
+                type: "single-choice",
+                visibleIf: isFullCmsBuild,
+                options: [
+                    { value: "none", label: "None" },
+                    {
+                        value: "simple",
+                        label: "Simple",
+                        effect: { bucket: "cms", hours: { min: 2, max: 4 } },
+                    },
+                    {
+                        value: "complex",
+                        label: "Complex, many-to-many",
+                        effect: {
+                            bucket: "cms",
+                            hours: { min: 8, max: 14 },
+                            risk: [{ axis: "execution", points: 1 }],
+                        },
+                    },
+                ],
+            },
+            {
+                id: "admin_custom",
+                label: "Admin customization",
+                type: "single-choice",
+                visibleIf: isFullCmsBuild,
+                options: [
+                    { value: "no", label: "No" },
+                    {
+                        value: "yes",
+                        label: "Yes",
+                        effect: { bucket: "cms", hours: { min: 4, max: 8 } },
+                    },
+                ],
+            },
+            {
+                id: "editor_flexibility",
+                label: "Editor freedom",
+                type: "single-choice",
+                visibleIf: isFullCmsBuild,
+                options: [
+                    { value: "rigid", label: "Rigid layouts" },
+                    { value: "flexible", label: "Flexible" },
+                    { value: "full", label: "Full freedom" },
+                ],
+            },
+        ],
+    },
+    {
+        id: "functionality",
+        title: "Functionality",
+        questions: [
+            {
+                id: "search_level",
+                label: "Search",
+                type: "single-choice",
+                options: [
+                    {
+                        value: "standard",
+                        label: "Standard WordPress search",
+                        effect: { bucket: "functionality", hours: { min: 0, max: 2 } },
+                    },
+                    {
+                        value: "by_cpt_fields",
+                        label: "By CPT and custom fields",
+                        effect: { bucket: "functionality", hours: { min: 6, max: 10 } },
+                    },
+                    {
+                        value: "ajax_live",
+                        label: "AJAX live search",
+                        effect: { bucket: "functionality", hours: { min: 12, max: 20 } },
+                    },
+                    {
+                        value: "algolia_es",
+                        label: "Algolia / Elasticsearch",
+                        effect: {
+                            bucket: "functionality",
+                            hours: { min: 30, max: 50 },
+                            risk: [{ axis: "execution", points: 1 }],
+                        },
+                    },
+                ],
+            },
+            {
+                id: "filters_level",
+                label: "Filters",
+                type: "single-choice",
+                options: [
+                    { value: "none", label: "None" },
+                    {
+                        value: "simple",
+                        label: "Simple",
+                        effect: { bucket: "functionality", hours: { min: 8, max: 14 } },
+                    },
+                    {
+                        value: "ajax_url",
+                        label: "AJAX + URL state",
+                        effect: { bucket: "functionality", hours: { min: 24, max: 36 } },
+                    },
+                    {
+                        value: "dependent_counts",
+                        label: "Dependent filters with result counts",
+                        effect: {
+                            bucket: "functionality",
+                            hours: { min: 50, max: 80 },
+                            risk: [{ axis: "execution", points: 2 }],
+                        },
+                    },
+                ],
+            },
+            {
+                id: "forms",
+                label: "Forms",
+                type: "quantity",
+                fields: [
+                    {
+                        id: "simple",
+                        label: "Simple forms",
+                        bucket: "functionality",
+                        hoursPerUnit: { min: 2, max: 3 },
+                    },
+                    {
+                        id: "with_logic",
+                        label: "Forms with logic and CRM",
+                        bucket: "functionality",
+                        hoursPerUnit: { min: 6, max: 9 },
+                    },
+                    {
+                        id: "multi_step",
+                        label: "Multi-step forms with upload",
+                        bucket: "functionality",
+                        hoursPerUnit: { min: 16, max: 24 },
+                    },
+                ],
+            },
+            {
+                id: "users_level",
+                label: "Users",
+                type: "single-choice",
+                options: [
+                    { value: "none", label: "None" },
+                    {
+                        value: "login_register",
+                        label: "Login + registration",
+                        effect: { bucket: "functionality", hours: { min: 8, max: 14 } },
+                    },
+                    {
+                        value: "account",
+                        label: "Personal account area",
+                        effect: {
+                            bucket: "functionality",
+                            hours: { min: 30, max: 50 },
+                            risk: [{ axis: "execution", points: 1 }],
+                        },
+                    },
+                    {
+                        value: "portal_roles",
+                        label: "Portal with roles",
+                        effect: {
+                            bucket: "functionality",
+                            hours: { min: 60, max: 100 },
+                            risk: [{ axis: "execution", points: 2 }],
+                        },
                     },
                 ],
             },
