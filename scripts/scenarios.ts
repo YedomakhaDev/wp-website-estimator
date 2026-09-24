@@ -109,7 +109,7 @@ const scenarioB_wooWeakInputs: Scenario = {
 };
 
 const scenarioC_bookingCleanButComplex: Scenario = {
-    name: "C. Booking, clean inputs but complex logic (expect high/medium border, ~12% reserve)",
+    name: "C. Booking, clean inputs, plugin heavily customized (expect high/medium border, ~12% reserve)",
     answers: {
         project_type: "booking",
         project_origin: "new",
@@ -129,6 +129,7 @@ const scenarioC_bookingCleanButComplex: Scenario = {
         filters_level: "none",
         forms: { simple: 0, with_logic: 0, multi_step: 0 },
         users_level: "login_register",
+        booking_build_approach: "plugin_customization",
         booking_resource_type: "multi_resource",
         booking_payment: "prepay_deposit",
         booking_changes: "policy",
@@ -150,6 +151,14 @@ const scenarioC_bookingCleanButComplex: Scenario = {
         communication: [],
         risk_factors: ["fixed_deadline"],
         docs_level: "basic",
+    },
+};
+
+const scenarioI_bookingCustomLogic: Scenario = {
+    name: "I. Booking, same features as C but fully custom logic (expect noticeably more hours + execution risk)",
+    answers: {
+        ...scenarioC_bookingCleanButComplex.answers,
+        booking_build_approach: "custom_logic",
     },
 };
 
@@ -358,6 +367,7 @@ const scenarios: Scenario[] = [
     scenarioF_membershipPortal,
     scenarioG_directoryListings,
     scenarioH_stopFlagMarketplace,
+    scenarioI_bookingCustomLogic,
 ];
 
 function formatHours(range: { min: number; max: number }): string {
