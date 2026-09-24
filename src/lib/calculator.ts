@@ -25,6 +25,12 @@ function scaleRange(range: HourRange, factor: number): HourRange {
     return { min: range.min * factor, max: range.max * factor };
 }
 
+// Hourly rate only affects the optional cost display — it doesn't change hours
+// or risk, so it isn't a questionnaire effect, just a display-time conversion.
+export function applyHourlyRate(hours: HourRange, rate: number): HourRange {
+    return scaleRange(hours, rate);
+}
+
 // Global components (header, footer, nav, base styles) are billed on every
 // project regardless of answers, so they are a constant rather than an effect.
 const FRONTEND_COMPONENTS_BASE: HourRange = { min: 12, max: 16 };

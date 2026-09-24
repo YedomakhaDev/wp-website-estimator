@@ -951,4 +951,150 @@ export const steps: Step[] = [
             },
         ],
     },
+    {
+        id: "infra-process",
+        title: "Infrastructure & process",
+        questions: [
+            {
+                id: "hosting_access",
+                label: "Hosting access",
+                type: "single-choice",
+                options: [
+                    {
+                        value: "ssh_git_staging",
+                        label: "SSH + Git + staging",
+                        effect: { bucket: "infraFixed", hours: { min: 4, max: 8 } },
+                    },
+                    {
+                        value: "sftp_only",
+                        label: "SFTP only",
+                        effect: {
+                            bucket: "infraFixed",
+                            hours: { min: 8, max: 12 },
+                            risk: [{ axis: "execution", points: 1 }],
+                        },
+                    },
+                    {
+                        value: "needs_setup",
+                        label: "Needs to be set up",
+                        effect: { bucket: "infraFixed", hours: { min: 10, max: 18 } },
+                    },
+                    {
+                        value: "unknown",
+                        label: "Unknown",
+                        effect: {
+                            bucket: "infraFixed",
+                            hours: { min: 8, max: 12 },
+                            risk: [{ axis: "execution", points: 2 }],
+                        },
+                    },
+                ],
+            },
+            {
+                id: "cicd",
+                label: "CI/CD",
+                type: "single-choice",
+                options: [
+                    { value: "no", label: "No" },
+                    {
+                        value: "yes",
+                        label: "Yes",
+                        effect: { bucket: "infraFixed", hours: { min: 8, max: 14 } },
+                    },
+                ],
+            },
+            {
+                id: "qa_level",
+                label: "QA",
+                type: "single-choice",
+                options: [
+                    { value: "developer_self", label: "Developer self-tests", effect: { qaPercent: 15 } },
+                    { value: "standard", label: "Standard", effect: { qaPercent: 20 } },
+                    { value: "strict", label: "Strict", effect: { qaPercent: 25 } },
+                ],
+            },
+            {
+                id: "revision_rounds",
+                label: "Revision rounds",
+                type: "single-choice",
+                options: [
+                    { value: "one", label: "1" },
+                    { value: "two", label: "2", effect: { qaPercent: 5 } },
+                    { value: "three_plus", label: "3+", effect: { qaPercent: 10 } },
+                ],
+            },
+            {
+                id: "communication",
+                label: "Communication",
+                type: "multi-choice",
+                options: [
+                    {
+                        value: "more_than_two_stakeholders",
+                        label: "More than 2 stakeholders",
+                        effect: { pmPercent: 3 },
+                    },
+                    {
+                        value: "regular_calls",
+                        label: "Regular calls",
+                        effect: { pmPercent: 3 },
+                    },
+                    {
+                        value: "jira_reports",
+                        label: "Jira and reporting",
+                        effect: { pmPercent: 3 },
+                    },
+                    {
+                        value: "slow_feedback_or_timezones",
+                        label: "Slow feedback or timezone gaps",
+                        effect: { pmPercent: 3 },
+                    },
+                ],
+            },
+            {
+                id: "risk_factors",
+                label: "Which of these are true?",
+                type: "multi-choice",
+                options: [
+                    {
+                        value: "fixed_deadline",
+                        label: "Fixed deadline",
+                        effect: { risk: [{ axis: "execution", points: 2, cappedCategory: "risk_factors" }] },
+                    },
+                    {
+                        value: "multiple_decision_makers",
+                        label: "Multiple decision makers",
+                        effect: { risk: [{ axis: "execution", points: 2, cappedCategory: "risk_factors" }] },
+                    },
+                    {
+                        value: "parallel_devs",
+                        label: "Other developers working in parallel",
+                        effect: { risk: [{ axis: "execution", points: 1, cappedCategory: "risk_factors" }] },
+                    },
+                    {
+                        value: "third_party_dependency",
+                        label: "Depends on a third party",
+                        effect: { risk: [{ axis: "execution", points: 1, cappedCategory: "risk_factors" }] },
+                    },
+                ],
+            },
+            {
+                id: "docs_level",
+                label: "Documentation",
+                type: "single-choice",
+                options: [
+                    { value: "none", label: "None" },
+                    {
+                        value: "basic",
+                        label: "Basic",
+                        effect: { bucket: "docs", hours: { min: 2, max: 6 } },
+                    },
+                    {
+                        value: "full_training",
+                        label: "Full docs + training",
+                        effect: { bucket: "docs", hours: { min: 8, max: 16 } },
+                    },
+                ],
+            },
+        ],
+    },
 ];

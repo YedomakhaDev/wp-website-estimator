@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { calculateEstimate } from "@/lib/calculator";
+import { applyHourlyRate, calculateEstimate } from "@/lib/calculator";
 import { steps } from "@/lib/questions";
 import { AnswerMap, AnswerValue, CalculationResult } from "@/lib/types";
 
@@ -10,9 +10,16 @@ function formatRange(range: { min: number; max: number }): string {
     return `${Math.round(range.min)}–${Math.round(range.max)}h`;
 }
 
+function formatCostRange(range: { min: number; max: number }): string {
+    const format = (value: number) => Math.round(value).toLocaleString();
+    if (range.min === range.max) return `$${format(range.min)}`;
+    return `$${format(range.min)}–${format(range.max)}`;
+}
+
 export default function Calculator() {
     const [answers, setAnswers] = useState<AnswerMap>({});
     const [result, setResult] = useState<CalculationResult | null>(null);
+    const [hourlyRate, setHourlyRate] = useState<number | "">("");
 
     function setAnswer(questionId: string, value: AnswerValue) {
         setAnswers((previous) => ({ ...previous, [questionId]: value }));
@@ -143,6 +150,28 @@ export default function Calculator() {
                             {formatRange(result.estimate.totalHours)}
                         </p>
                     </div>
+
+                    <label className="flex items-center justify-between gap-2 text-sm text-foreground">
+                        <span>Hourly rate (optional)</span>
+                        <input
+                            type="number"
+                            min={0}
+                            value={hourlyRate}
+                            onChange={(event) =>
+                                setHourlyRate(event.target.value === "" ? "" : Number(event.target.value))
+                            }
+                            className="w-24 rounded-control border border-border px-3 py-2 text-sm text-foreground"
+                        />
+                    </label>
+
+                    {hourlyRate !== "" && hourlyRate > 0 && (
+                        <div>
+                            <p className="text-sm text-muted-foreground">Estimated cost</p>
+                            <p className="text-2xl font-bold tracking-tight text-foreground">
+                                {formatCostRange(applyHourlyRate(result.estimate.totalHours, hourlyRate))}
+                            </p>
+                        </div>
+                    )}
 
                     <div className="divide-y divide-border rounded-control border border-border text-sm">
                         {result.estimate.workstreamBreakdown.map((item) => (
