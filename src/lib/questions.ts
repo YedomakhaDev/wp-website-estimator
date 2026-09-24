@@ -776,4 +776,179 @@ export const steps: Step[] = [
             },
         ],
     },
+    {
+        id: "content",
+        title: "Content",
+        questions: [
+            {
+                id: "content_fill",
+                label: "Who fills in the content?",
+                type: "single-choice",
+                options: [
+                    { value: "client", label: "Client" },
+                    { value: "developer", label: "Developer" },
+                ],
+            },
+            {
+                id: "content_fill_pages",
+                label: "Pages the developer needs to fill",
+                type: "quantity",
+                visibleIf: (answers) => answers.content_fill === "developer",
+                fields: [
+                    {
+                        id: "pages",
+                        label: "Pages",
+                        bucket: "content",
+                        hoursPerUnit: { min: 0.5, max: 1 },
+                    },
+                ],
+            },
+            {
+                id: "import_level",
+                label: "Content import",
+                type: "single-choice",
+                options: [
+                    { value: "none", label: "None" },
+                    {
+                        value: "manual_small",
+                        label: "Manual, up to 50 entries",
+                        effect: { bucket: "content", hours: { min: 4, max: 8 } },
+                    },
+                    {
+                        value: "auto_clean",
+                        label: "Automatic, clean data",
+                        effect: { bucket: "content", hours: { min: 12, max: 20 } },
+                    },
+                    {
+                        value: "dirty_relations",
+                        label: "Dirty data with relations",
+                        effect: {
+                            bucket: "content",
+                            hours: { min: 30, max: 50 },
+                            risk: [{ axis: "execution", points: 2 }],
+                        },
+                    },
+                ],
+            },
+            {
+                id: "redirects",
+                label: "Redirect map",
+                type: "single-choice",
+                visibleIf: (answers) => answers.project_origin === "migration",
+                options: [
+                    { value: "no", label: "No" },
+                    {
+                        value: "yes",
+                        label: "Yes",
+                        effect: { bucket: "content", hours: { min: 4, max: 10 } },
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        id: "seo-quality",
+        title: "SEO, analytics & quality",
+        questions: [
+            {
+                id: "seo_level",
+                label: "SEO",
+                type: "single-choice",
+                options: [
+                    {
+                        value: "basic",
+                        label: "Basic",
+                        effect: { bucket: "seoQuality", hours: { min: 3, max: 4 } },
+                    },
+                    {
+                        value: "schema_custom",
+                        label: "Schema markup and customization",
+                        effect: { bucket: "seoQuality", hours: { min: 12, max: 18 } },
+                    },
+                ],
+            },
+            {
+                id: "analytics_level",
+                label: "Analytics",
+                type: "single-choice",
+                options: [
+                    {
+                        value: "ga4_gtm",
+                        label: "GA4 + GTM",
+                        effect: { bucket: "seoQuality", hours: { min: 2, max: 3 } },
+                    },
+                    {
+                        value: "custom_events",
+                        label: "Custom events",
+                        effect: { bucket: "seoQuality", hours: { min: 8, max: 12 } },
+                    },
+                ],
+            },
+            {
+                id: "analytics_ecommerce",
+                label: "Ecommerce events",
+                type: "single-choice",
+                visibleIf: (answers) => answers.project_type === "woocommerce",
+                options: [
+                    { value: "no", label: "No" },
+                    {
+                        value: "yes",
+                        label: "Yes",
+                        effect: { bucket: "seoQuality", hours: { min: 8, max: 12 } },
+                    },
+                ],
+            },
+            {
+                id: "cookie_consent",
+                label: "Cookie consent",
+                type: "single-choice",
+                options: [
+                    { value: "no", label: "No" },
+                    {
+                        value: "yes",
+                        label: "Yes",
+                        effect: { bucket: "seoQuality", hours: { min: 2, max: 4 } },
+                    },
+                ],
+            },
+            {
+                id: "performance_level",
+                label: "Performance",
+                type: "single-choice",
+                options: [
+                    {
+                        value: "standard",
+                        label: "Standard",
+                        effect: { bucket: "seoQuality", hours: { min: 4, max: 6 } },
+                    },
+                    {
+                        value: "target_cwv",
+                        label: "Targeted Core Web Vitals",
+                        effect: {
+                            bucket: "seoQuality",
+                            hours: { min: 16, max: 24 },
+                            risk: [{ axis: "execution", points: 1 }],
+                        },
+                    },
+                ],
+            },
+            {
+                id: "accessibility_level",
+                label: "Accessibility",
+                type: "single-choice",
+                options: [
+                    { value: "basic", label: "Basic" },
+                    {
+                        value: "wcag_aa",
+                        label: "WCAG AA",
+                        effect: {
+                            bucket: "seoQuality",
+                            hours: { min: 8, max: 12 },
+                            frontendPercent: 0.15,
+                        },
+                    },
+                ],
+            },
+        ],
+    },
 ];
