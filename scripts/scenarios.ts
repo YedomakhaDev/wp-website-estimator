@@ -1,9 +1,10 @@
 // Calibration regression check. Run with: npx tsx scripts/scenarios.ts
 //
-// Four fixed answer sets (three realistic, one deliberately maxed-out stress
-// test) with the estimate they produced when this file was written. When
-// tuning coefficients later, re-run this and compare — a "normal" scenario
-// drifting wildly, or the stress test suddenly looking tame, is a signal.
+// Fixed answer sets spanning most project types, plus one deliberately
+// maxed-out stress test and one stop-flag case, with the estimates they
+// produced when this file was written. When tuning coefficients later,
+// re-run this and compare — a "normal" scenario drifting wildly, or the
+// stress test suddenly looking tame, is a signal.
 import { calculateEstimate } from "../src/lib/calculator";
 import { steps } from "../src/lib/questions";
 import { AnswerMap } from "../src/lib/types";
@@ -209,24 +210,186 @@ const scenarioD_everythingMaxed: Scenario = {
     },
 };
 
+const scenarioE_landingMinimal: Scenario = {
+    name: "E. Landing page, minimal scope (expect low hours, high confidence)",
+    answers: {
+        project_type: "landing",
+        project_origin: "new",
+        design_status: "final_all",
+        specs_status: "described",
+        content_status: "final",
+        requirements_stability: "approved",
+        build_approach: "page_builder",
+        design_complexity: "standard",
+        unique_blocks: { count: 7 },
+        templates: { simple: 1, dynamic: 0 },
+        header_complexity: "simple",
+        animations_level: "none",
+        pixel_perfect: "no",
+        cpt_count: { count: 0 },
+        search_level: "standard",
+        filters_level: "none",
+        forms: { simple: 1, with_logic: 0, multi_step: 0 },
+        users_level: "none",
+        integrations: { plugin: 0, one_way: 0, two_way: 0 },
+        integrations_docs: "normal",
+        languages: "one",
+        content_fill: "client",
+        import_level: "none",
+        seo_level: "basic",
+        analytics_level: "ga4_gtm",
+        cookie_consent: "no",
+        performance_level: "standard",
+        accessibility_level: "basic",
+        hosting_access: "ssh_git_staging",
+        cicd: "no",
+        qa_level: "developer_self",
+        revision_rounds: "one",
+        communication: [],
+        risk_factors: [],
+        docs_level: "none",
+    },
+};
+
+const scenarioF_membershipPortal: Scenario = {
+    name: "F. Membership portal, moderate complexity (expect medium-high confidence)",
+    answers: {
+        project_type: "membership",
+        project_origin: "new",
+        design_status: "final_all",
+        specs_status: "described",
+        content_status: "final",
+        requirements_stability: "approved",
+        build_approach: "custom_acf",
+        design_complexity: "custom",
+        unique_blocks: { count: 9 },
+        templates: { simple: 2, dynamic: 2 },
+        header_complexity: "simple",
+        animations_level: "basic",
+        pixel_perfect: "no",
+        cpt_count: { count: 2 },
+        taxonomy_count: { count: 1 },
+        relations: "simple",
+        admin_custom: "no",
+        editor_flexibility: "flexible",
+        search_level: "standard",
+        filters_level: "none",
+        forms: { simple: 1, with_logic: 0, multi_step: 0 },
+        users_level: "portal_roles",
+        integrations: { plugin: 1, one_way: 0, two_way: 0 },
+        integrations_docs: "normal",
+        languages: "one",
+        content_fill: "client",
+        import_level: "none",
+        seo_level: "basic",
+        analytics_level: "ga4_gtm",
+        cookie_consent: "yes",
+        performance_level: "standard",
+        accessibility_level: "basic",
+        hosting_access: "ssh_git_staging",
+        cicd: "no",
+        qa_level: "standard",
+        revision_rounds: "two",
+        communication: [],
+        risk_factors: [],
+        docs_level: "basic",
+    },
+};
+
+const scenarioG_directoryListings: Scenario = {
+    name: "G. Directory / listings, typical scope (expect medium-high confidence)",
+    answers: {
+        project_type: "directory",
+        project_origin: "new",
+        design_status: "final_all",
+        specs_status: "described",
+        content_status: "final",
+        requirements_stability: "approved",
+        build_approach: "native_gutenberg",
+        design_complexity: "standard",
+        unique_blocks: { count: 10 },
+        templates: { simple: 2, dynamic: 3 },
+        header_complexity: "simple",
+        animations_level: "none",
+        pixel_perfect: "no",
+        cpt_count: { count: 1 },
+        taxonomy_count: { count: 2 },
+        relations: "none",
+        admin_custom: "no",
+        editor_flexibility: "flexible",
+        search_level: "by_cpt_fields",
+        filters_level: "ajax_url",
+        forms: { simple: 0, with_logic: 0, multi_step: 1 },
+        users_level: "login_register",
+        integrations: { plugin: 1, one_way: 0, two_way: 0 },
+        integrations_docs: "normal",
+        languages: "one",
+        content_fill: "client",
+        import_level: "none",
+        seo_level: "basic",
+        analytics_level: "ga4_gtm",
+        cookie_consent: "yes",
+        performance_level: "standard",
+        accessibility_level: "basic",
+        hosting_access: "ssh_git_staging",
+        cicd: "no",
+        qa_level: "standard",
+        revision_rounds: "two",
+        communication: [],
+        risk_factors: [],
+        docs_level: "basic",
+    },
+};
+
+const scenarioH_stopFlagMarketplace: Scenario = {
+    name: "H. Marketplace — stop-flag demonstration (expect immediate stop, no estimate)",
+    answers: {
+        project_type: "marketplace",
+        project_origin: "new",
+    },
+};
+
 const scenarios: Scenario[] = [
     scenarioA_cleanCorporate,
     scenarioB_wooWeakInputs,
     scenarioC_bookingCleanButComplex,
     scenarioD_everythingMaxed,
+    scenarioE_landingMinimal,
+    scenarioF_membershipPortal,
+    scenarioG_directoryListings,
+    scenarioH_stopFlagMarketplace,
 ];
 
+function formatHours(range: { min: number; max: number }): string {
+    return `${Math.round(range.min)}–${Math.round(range.max)}h`;
+}
+
 for (const scenario of scenarios) {
+    console.log(`\n${"=".repeat(78)}`);
+    console.log(scenario.name);
+    console.log("=".repeat(78));
+
     const result = calculateEstimate(steps, scenario.answers);
-    console.log(`\n${scenario.name}`);
 
     if (result.status === "stop") {
-        console.log(`  STOP: ${result.message}`);
+        console.log(`STOP: ${result.message}`);
         continue;
     }
 
-    const { totalHours, riskReservePercent, confidenceLevel, discoveryRecommendation } = result.estimate;
-    console.log(`  Total: ${Math.round(totalHours.min)}–${Math.round(totalHours.max)}h`);
-    console.log(`  Reserve: ${riskReservePercent.toFixed(1)}%  Confidence: ${confidenceLevel}`);
-    console.log(`  Discovery: ${discoveryRecommendation ? discoveryRecommendation.reason : "none"}`);
+    const { workstreamBreakdown, totalHours, riskReservePercent, confidenceLevel, discoveryRecommendation, assumptions } =
+        result.estimate;
+
+    console.log("\nBreakdown:");
+    for (const item of workstreamBreakdown) {
+        console.log(`  ${item.label.padEnd(28)} ${formatHours(item.hours)}`);
+    }
+
+    console.log(`\nTotal: ${formatHours(totalHours)}`);
+    console.log(`Confidence: ${confidenceLevel}  (risk reserve ${riskReservePercent.toFixed(1)}%)`);
+    console.log(`Discovery recommendation: ${discoveryRecommendation ? discoveryRecommendation.message : "none"}`);
+
+    console.log("\nAssumptions:");
+    for (const line of assumptions) {
+        console.log(`  - ${line}`);
+    }
 }
