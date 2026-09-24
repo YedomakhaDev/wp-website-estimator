@@ -10,7 +10,7 @@ import {
     isVisible,
 } from "@/lib/calculator";
 import { steps } from "@/lib/questions";
-import { AnswerMap, AnswerValue, Question, Step } from "@/lib/types";
+import { AnswerMap, AnswerValue, HourRange, Question, Step } from "@/lib/types";
 
 function formatRange(range: { min: number; max: number }): string {
     if (range.min === range.max) return `${Math.round(range.min)}h`;
@@ -28,6 +28,29 @@ type StepStatus = "completed" | "current" | "upcoming";
 function getStepStatus(step: Step, answers: AnswerMap, isCurrent: boolean): StepStatus {
     if (isStepComplete(step, answers)) return "completed";
     return isCurrent ? "current" : "upcoming";
+}
+
+function getProjectTypeLabel(answers: AnswerMap): string | null {
+    const projectTypeQuestion = steps
+        .flatMap((step) => step.questions)
+        .find((question) => question.id === "project_type");
+    if (!projectTypeQuestion || projectTypeQuestion.type === "quantity") return null;
+
+    const option = projectTypeQuestion.options.find((item) => item.value === answers.project_type);
+    return option?.label ?? null;
+}
+
+// A static "Corporate website" label reads as broken once every dial is maxed
+// out (20 blocks, GSAP, Algolia, a role-based portal...) — the label should
+// reflect what was actually scoped, not just the project type picked in step 1.
+function getScopeDescriptor(projectTypeLabel: string, totalHours: HourRange): string {
+    const midpoint = (totalHours.min + totalHours.max) / 2;
+    const label = projectTypeLabel.toLowerCase();
+
+    if (midpoint < 200) return `Simple ${label}`;
+    if (midpoint < 600) return projectTypeLabel;
+    if (midpoint < 1200) return `Large ${label}`;
+    return `Highly complex ${label}`;
 }
 
 function QuestionField({
@@ -131,6 +154,7 @@ export default function Calculator() {
     const progressPercent = progress.total === 0 ? 0 : Math.round((progress.answered / progress.total) * 100);
 
     const result = calculateEstimate(steps, answers);
+    const projectTypeLabel = getProjectTypeLabel(answers);
 
     function goTo(index: number) {
         const step = visibleSteps[index];
@@ -253,6 +277,11 @@ export default function Calculator() {
                 ) : (
                     <>
                         <div>
+                            {projectTypeLabel && (
+                                <p className="text-sm font-medium text-foreground">
+                                    {getScopeDescriptor(projectTypeLabel, result.estimate.totalHours)}
+                                </p>
+                            )}
                             <p className="text-3xl font-bold tracking-tight text-foreground">
                                 {formatRange(result.estimate.totalHours)}
                             </p>
