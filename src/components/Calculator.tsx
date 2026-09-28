@@ -248,7 +248,7 @@ export default function Calculator() {
     return (
         <div className="space-y-6">
             <div className="min-w-0 rounded-card border border-border bg-surface p-6 shadow-sm">
-                <div className="sticky top-16 z-10 -mx-6 -mt-6 rounded-t-card bg-surface px-6 pb-3 pt-6">
+                <div className="-mx-6 -mt-6 rounded-t-card bg-surface px-6 pb-3 pt-6">
                     <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
                         <p className="text-sm font-semibold text-foreground">
                             Step {currentIndex + 1} of {visibleSteps.length}
