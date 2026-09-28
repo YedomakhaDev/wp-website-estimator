@@ -1,36 +1,42 @@
 const steps = [
     {
         number: "01",
-        title: "Answer a few questions",
-        description: "Tell us about your project: site type, page count, and the features you need.",
+        title: "Scope",
+        description:
+            "Your answers add base hours to individual workstreams — frontend, CMS, functionality, integrations and more.",
     },
     {
         number: "02",
-        title: "We calculate the estimate",
-        description: "Your answers are turned into an hours and cost range using our estimation rules.",
+        title: "Allowances",
+        description: "QA & fixes, PM & communication, deployment and documentation are added on top, scaled to the project.",
     },
     {
         number: "03",
-        title: "Review your results",
-        description: "Get a breakdown of hours, an estimated cost, and the assumptions behind it.",
+        title: "Risk",
+        description: "Unclear requirements and technical complexity contribute to a risk reserve and a scope confidence level.",
+    },
+    {
+        number: "04",
+        title: "Result",
+        description: "You get an hours range, a full workstream breakdown, the assumptions behind it, and an optional cost.",
     },
 ];
 
-export default function HowItWorks() {
+export default function Methodology() {
     return (
         <section className="border-t border-border py-16">
             <div className="mx-auto max-w-content px-6">
                 <p className="text-center text-sm font-medium uppercase tracking-wide text-primary">
-                    How it works
+                    Methodology
                 </p>
                 <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-foreground">
-                    From answers to a clearer estimate
+                    How the estimate is built
                 </h2>
                 <p className="mx-auto mt-3 max-w-md text-center text-muted-foreground">
-                    A simple three-step process to turn your project details into an estimate.
+                    A structured, deterministic process — no AI, no guesswork.
                 </p>
 
-                <div className="mt-12 grid gap-8 sm:grid-cols-3">
+                <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
                     {steps.map((step) => (
                         <div key={step.number}>
                             <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-subtle text-sm font-semibold text-primary">

@@ -1,7 +1,9 @@
+import BuiltForWordPress from "@/components/BuiltForWordPress";
 import Calculator from "@/components/Calculator";
+import ExampleEstimate from "@/components/ExampleEstimate";
 import Faq from "@/components/Faq";
 import Hero from "@/components/Hero";
-import HowItWorks from "@/components/HowItWorks";
+import Methodology from "@/components/Methodology";
 
 export default function Home() {
     return (
@@ -13,7 +15,9 @@ export default function Home() {
                 </div>
             </main>
 
-            <HowItWorks />
+            <Methodology />
+            <BuiltForWordPress />
+            <ExampleEstimate />
             <Faq />
         </div>
     );
