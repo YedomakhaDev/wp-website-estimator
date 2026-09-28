@@ -332,15 +332,14 @@ export default function Calculator() {
                                               : "border-transparent text-foreground"
                                     }`}
                                 >
-                                    <span className="flex items-center gap-1.5">
-                                        <StepStatusIcon status={status} />
+                                    <span>
                                         <span className="mr-1.5 text-xs font-semibold text-muted-foreground">
                                             {String(index + 1).padStart(2, "0")}
                                         </span>
                                         {step.title}
                                     </span>
                                     <span
-                                        className={`block text-xs font-normal ${
+                                        className={`flex items-center gap-1 text-xs font-normal ${
                                             status === "completed"
                                                 ? "text-success"
                                                 : status === "current"
@@ -348,6 +347,7 @@ export default function Calculator() {
                                                   : "text-muted-foreground"
                                         }`}
                                     >
+                                        <StepStatusIcon status={status} />
                                         {status === "completed"
                                             ? "Completed"
                                             : status === "current"
