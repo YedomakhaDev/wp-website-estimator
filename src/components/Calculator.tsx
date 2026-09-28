@@ -30,6 +30,38 @@ function getStepStatus(step: Step, answers: AnswerMap, isCurrent: boolean): Step
     return isCurrent ? "current" : "upcoming";
 }
 
+function StepStatusIcon({ status }: { status: StepStatus }) {
+    if (status === "completed") {
+        return (
+            <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 shrink-0 text-success">
+                <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
+                <path
+                    d="M6 10.5L8.5 13L14 7.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </svg>
+        );
+    }
+
+    if (status === "current") {
+        return (
+            <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 shrink-0 text-primary">
+                <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
+                <circle cx="10" cy="10" r="3.5" fill="currentColor" />
+            </svg>
+        );
+    }
+
+    return (
+        <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 shrink-0 text-border">
+            <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
+        </svg>
+    );
+}
+
 function getProjectTypeLabel(answers: AnswerMap): string | null {
     const projectTypeQuestion = steps
         .flatMap((step) => step.questions)
@@ -300,13 +332,22 @@ export default function Calculator() {
                                               : "border-transparent text-foreground"
                                     }`}
                                 >
-                                    <span>
+                                    <span className="flex items-center gap-1.5">
+                                        <StepStatusIcon status={status} />
                                         <span className="mr-1.5 text-xs font-semibold text-muted-foreground">
                                             {String(index + 1).padStart(2, "0")}
                                         </span>
                                         {step.title}
                                     </span>
-                                    <span className="block text-xs font-normal text-muted-foreground">
+                                    <span
+                                        className={`block text-xs font-normal ${
+                                            status === "completed"
+                                                ? "text-success"
+                                                : status === "current"
+                                                  ? "text-primary"
+                                                  : "text-muted-foreground"
+                                        }`}
+                                    >
                                         {status === "completed"
                                             ? "Completed"
                                             : status === "current"
