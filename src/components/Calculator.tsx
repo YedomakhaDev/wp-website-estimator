@@ -279,7 +279,7 @@ export default function Calculator() {
                                     }}
                                     type="button"
                                     onClick={() => handleTabClick(index)}
-                                    className={`shrink-0 whitespace-nowrap border-b-2 pb-3 text-sm font-medium ${
+                                    className={`shrink-0 cursor-pointer whitespace-nowrap border-b-2 py-3 text-sm font-medium ${
                                         status === "current"
                                             ? "border-primary text-foreground"
                                             : status === "upcoming"
