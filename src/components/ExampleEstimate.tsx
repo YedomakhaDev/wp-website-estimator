@@ -84,6 +84,13 @@ export default function ExampleEstimate() {
                             </span>
                             <span className="text-xs text-muted-foreground">Risk reserve 11%</span>
                         </div>
+
+                        <a
+                            href="#calculator"
+                            className="mt-4 block rounded-control bg-primary px-4 py-2 text-center text-sm font-medium text-primary-foreground"
+                        >
+                            Try your own estimate
+                        </a>
                     </div>
 
                     <div className="rounded-card border border-border bg-surface p-6 shadow-sm">
@@ -105,15 +112,6 @@ export default function ExampleEstimate() {
                             ))}
                         </div>
                     </div>
-                </div>
-
-                <div className="mt-8 text-center">
-                    <a
-                        href="#calculator"
-                        className="inline-block rounded-control border border-border px-4 py-2 text-sm font-medium text-foreground"
-                    >
-                        Try your own estimate
-                    </a>
                 </div>
             </div>
         </section>
