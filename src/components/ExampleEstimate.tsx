@@ -15,7 +15,7 @@ const breakdown = [
 
 export default function ExampleEstimate() {
     return (
-        <section className="border-t border-border py-16">
+        <section id="example" className="scroll-mt-20 border-t border-border py-16">
             <div className="mx-auto max-w-content px-6">
                 <div className="flex flex-wrap items-end justify-between gap-4">
                     <div>
@@ -23,7 +23,7 @@ export default function ExampleEstimate() {
                             Example estimate
                         </p>
                         <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
-                            A real result, not a mockup
+                            See a complete example estimate
                         </h2>
                         <p className="mt-3 max-w-md text-muted-foreground">
                             A corporate website with a custom ACF build, 13 blocks, a CPT, and one integration —
