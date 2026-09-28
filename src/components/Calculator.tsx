@@ -244,23 +244,34 @@ export default function Calculator() {
     }
 
     return (
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="space-y-6">
             <div className="min-w-0 rounded-card border border-border bg-surface p-6 shadow-sm">
-                <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-foreground">
-                        Step {currentIndex + 1} of {visibleSteps.length}
-                    </p>
-                    <p className="text-sm font-medium text-muted-foreground">{progressPercent}% complete</p>
+                <div className="sticky top-16 z-10 -mx-6 -mt-6 rounded-t-card bg-surface px-6 pb-3 pt-6">
+                    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                        <p className="text-sm font-semibold text-foreground">
+                            Step {currentIndex + 1} of {visibleSteps.length}
+                        </p>
+                        <div className="flex items-center gap-3">
+                            <p className="text-sm font-medium text-muted-foreground">
+                                {progressPercent}% complete
+                            </p>
+                            {result.status === "ok" && (
+                                <span className="rounded-full bg-primary-subtle px-2.5 py-1 text-xs font-semibold text-primary">
+                                    {formatRange(result.estimate.totalHours)}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
+                        <div
+                            className="h-full rounded-full bg-primary transition-all"
+                            style={{ width: `${progressPercent}%` }}
+                        />
+                    </div>
                 </div>
 
-                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
-                    <div
-                        className="h-full rounded-full bg-primary transition-all"
-                        style={{ width: `${progressPercent}%` }}
-                    />
-                </div>
-
-                <div className="relative mt-6 -mx-6 border-b border-border">
+                <div className="relative mt-8 -mx-6 border-b border-border">
                     <div
                         ref={tabStripRef}
                         onMouseDown={handleStripMouseDown}
@@ -384,7 +395,7 @@ export default function Calculator() {
                 )}
             </div>
 
-            <div className="h-fit space-y-4 rounded-card border border-border bg-surface p-6 shadow-sm lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto">
+            <div className="space-y-4 rounded-card border border-border bg-surface p-6 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     Preliminary estimate
                 </p>
