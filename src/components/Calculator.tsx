@@ -332,7 +332,7 @@ export default function Calculator() {
                                     }}
                                     type="button"
                                     onClick={() => handleTabClick(index)}
-                                    className={`shrink-0 cursor-pointer whitespace-nowrap border-b-2 py-3 text-left text-sm font-medium ${
+                                    className={`shrink-0 cursor-pointer whitespace-nowrap border-b-2 py-4 text-left text-sm font-medium ${
                                         isActiveTab
                                             ? "border-primary text-foreground"
                                             : status === "not-started"
@@ -346,22 +346,16 @@ export default function Calculator() {
                                         </span>
                                         {step.title}
                                     </span>
-                                    <span
-                                        className={`flex items-center gap-1 text-xs font-normal ${
-                                            status === "completed"
-                                                ? "text-success"
-                                                : status === "in-progress"
-                                                  ? "text-primary"
-                                                  : "text-muted-foreground"
-                                        }`}
-                                    >
-                                        {status === "completed" && <CompletedIcon />}
-                                        {status === "completed"
-                                            ? "Completed"
-                                            : status === "in-progress"
-                                              ? "In progress"
-                                              : "Not started"}
-                                    </span>
+                                    {status !== "not-started" && (
+                                        <span
+                                            className={`flex items-center gap-1 text-xs font-normal ${
+                                                status === "completed" ? "text-success" : "text-primary"
+                                            }`}
+                                        >
+                                            {status === "completed" && <CompletedIcon />}
+                                            {status === "completed" ? "Completed" : "In progress"}
+                                        </span>
+                                    )}
                                 </button>
                             );
                         })}
@@ -460,7 +454,7 @@ export default function Calculator() {
 
             <div
                 ref={estimatePanelRef}
-                className={`h-fit space-y-4 rounded-card border border-border bg-surface p-6 shadow-sm ${
+                className={`h-fit space-y-8 rounded-card border border-border bg-surface p-6 shadow-sm ${
                     canStick ? "lg:sticky lg:top-4" : ""
                 }`}
             >
@@ -474,41 +468,43 @@ export default function Calculator() {
                     </div>
                 ) : (
                     <>
-                        <div>
-                            {projectTypeLabel && (
-                                <p className="text-sm font-medium text-foreground">
-                                    {getScopeDescriptor(projectTypeLabel, result.estimate.totalHours)}
+                        <div className="space-y-3">
+                            <div>
+                                {projectTypeLabel && (
+                                    <p className="text-sm font-medium text-foreground">
+                                        {getScopeDescriptor(projectTypeLabel, result.estimate.totalHours)}
+                                    </p>
+                                )}
+                                <p className="text-3xl font-bold tracking-tight text-foreground">
+                                    {formatRange(result.estimate.totalHours)}
                                 </p>
+                                <p className="text-xs text-muted-foreground">Based on what&apos;s answered so far.</p>
+                            </div>
+
+                            <label className="flex items-center justify-between gap-2 text-sm text-foreground">
+                                <span>Hourly rate (optional)</span>
+                                <input
+                                    type="number"
+                                    min={0}
+                                    value={hourlyRate}
+                                    onChange={(event) =>
+                                        setHourlyRate(event.target.value === "" ? "" : Number(event.target.value))
+                                    }
+                                    className="w-24 rounded-control border border-border px-3 py-2 text-sm text-foreground"
+                                />
+                            </label>
+
+                            {hourlyRate !== "" && hourlyRate > 0 && (
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Estimated cost</p>
+                                    <p className="text-2xl font-bold tracking-tight text-foreground">
+                                        {formatCostRange(applyHourlyRate(result.estimate.totalHours, hourlyRate))}
+                                    </p>
+                                </div>
                             )}
-                            <p className="text-3xl font-bold tracking-tight text-foreground">
-                                {formatRange(result.estimate.totalHours)}
-                            </p>
-                            <p className="text-xs text-muted-foreground">Based on what&apos;s answered so far.</p>
                         </div>
 
-                        <label className="flex items-center justify-between gap-2 text-sm text-foreground">
-                            <span>Hourly rate (optional)</span>
-                            <input
-                                type="number"
-                                min={0}
-                                value={hourlyRate}
-                                onChange={(event) =>
-                                    setHourlyRate(event.target.value === "" ? "" : Number(event.target.value))
-                                }
-                                className="w-24 rounded-control border border-border px-3 py-2 text-sm text-foreground"
-                            />
-                        </label>
-
-                        {hourlyRate !== "" && hourlyRate > 0 && (
-                            <div>
-                                <p className="text-sm text-muted-foreground">Estimated cost</p>
-                                <p className="text-2xl font-bold tracking-tight text-foreground">
-                                    {formatCostRange(applyHourlyRate(result.estimate.totalHours, hourlyRate))}
-                                </p>
-                            </div>
-                        )}
-
-                        <div className="border-t border-border pt-4">
+                        <div className="space-y-2 border-t border-border pt-6">
                             <div className="flex items-center gap-2">
                                 <span className="text-sm text-muted-foreground">Scope confidence:</span>
                                 <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary">
@@ -518,28 +514,32 @@ export default function Calculator() {
                                     (risk reserve {Math.round(result.estimate.riskReservePercent)}%)
                                 </span>
                             </div>
-                            <p className="mt-1 text-xs text-muted-foreground">
+                            <p className="text-xs text-muted-foreground">
                                 Reflects how well-defined your answers are, not a guarantee of the hour range&apos;s
                                 accuracy.
                             </p>
-                        </div>
 
-                        {result.estimate.discoveryRecommendation && (
-                            <div className="rounded-control border border-warning/30 bg-warning-subtle p-3 text-sm text-warning">
-                                {result.estimate.discoveryRecommendation.message}
-                            </div>
-                        )}
-
-                        <div className="divide-y divide-border rounded-control border border-border text-sm">
-                            {result.estimate.workstreamBreakdown.map((item) => (
-                                <div key={item.id} className="flex justify-between px-3 py-2">
-                                    <span className="text-foreground">{item.label}</span>
-                                    <span className="text-muted-foreground">{formatRange(item.hours)}</span>
+                            {result.estimate.discoveryRecommendation && (
+                                <div className="rounded-control border border-warning/30 bg-warning-subtle p-3 text-sm text-warning">
+                                    {result.estimate.discoveryRecommendation.message}
                                 </div>
-                            ))}
+                            )}
                         </div>
 
-                        <details className="group">
+                        <div className="border-t border-border pt-6">
+                            <div className="divide-y divide-border rounded-control border border-border text-sm">
+                                {result.estimate.workstreamBreakdown
+                                    .filter((item) => item.hours.min > 0 || item.hours.max > 0)
+                                    .map((item) => (
+                                        <div key={item.id} className="flex justify-between px-3 py-2">
+                                            <span className="text-foreground">{item.label}</span>
+                                            <span className="text-muted-foreground">{formatRange(item.hours)}</span>
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+
+                        <details className="group border-t border-border pt-6">
                             <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium text-foreground">
                                 <span>Assumptions ({result.estimate.assumptions.length})</span>
                                 <span className="text-xs font-normal text-muted-foreground group-open:hidden">
