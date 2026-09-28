@@ -292,7 +292,7 @@ export default function Calculator() {
                                     }}
                                     type="button"
                                     onClick={() => handleTabClick(index)}
-                                    className={`shrink-0 cursor-pointer whitespace-nowrap border-b-2 py-3 text-sm font-medium ${
+                                    className={`shrink-0 cursor-pointer whitespace-nowrap border-b-2 py-3 text-left text-sm font-medium ${
                                         status === "current"
                                             ? "border-primary text-foreground"
                                             : status === "upcoming"
@@ -300,10 +300,19 @@ export default function Calculator() {
                                               : "border-transparent text-foreground"
                                     }`}
                                 >
-                                    <span className="mr-1.5 text-xs font-semibold text-muted-foreground">
-                                        {String(index + 1).padStart(2, "0")}
+                                    <span>
+                                        <span className="mr-1.5 text-xs font-semibold text-muted-foreground">
+                                            {String(index + 1).padStart(2, "0")}
+                                        </span>
+                                        {step.title}
                                     </span>
-                                    {step.title}
+                                    <span className="block text-xs font-normal text-muted-foreground">
+                                        {status === "completed"
+                                            ? "Completed"
+                                            : status === "current"
+                                              ? "In progress"
+                                              : "Not started"}
+                                    </span>
                                 </button>
                             );
                         })}
