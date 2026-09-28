@@ -62,8 +62,7 @@ function QuestionField({
     value: AnswerValue | undefined;
     onChange: (value: AnswerValue) => void;
 }) {
-    const optionsContainerClass =
-        question.type === "quantity" ? "mt-2 space-y-2" : "mt-2 grid gap-2 sm:grid-cols-2";
+    const optionsContainerClass = "mt-2 grid gap-2 sm:grid-cols-2";
 
     return (
         <fieldset className="border-0 p-0">
