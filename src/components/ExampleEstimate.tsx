@@ -32,7 +32,7 @@ function BreakdownRow({ item, tone }: { item: BreakdownItem; tone: "primary" | "
 
     return (
         <div className="flex items-center gap-3 py-1.5">
-            <span className="w-36 shrink-0 text-sm text-foreground">{item.label}</span>
+            <span className="w-40 shrink-0 text-sm text-foreground">{item.label}</span>
             <div className="h-2 flex-1 overflow-hidden rounded-full bg-border">
                 <div
                     className={`h-full rounded-full ${tone === "primary" ? "bg-primary" : "bg-muted-foreground/50"}`}
