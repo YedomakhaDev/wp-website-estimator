@@ -273,7 +273,7 @@ export default function Calculator() {
                     </div>
                 </div>
 
-                <div className="relative mt-8 -mx-6 border-b border-border">
+                <div className="relative -mx-6 border-b border-border">
                     <div
                         ref={tabStripRef}
                         onMouseDown={handleStripMouseDown}
