@@ -22,6 +22,23 @@ const steps = [
     },
 ];
 
+function PipelineArrow() {
+    return (
+        <span aria-hidden className="ml-2 hidden flex-1 items-center gap-1 text-border lg:flex">
+            <span className="h-px flex-1 bg-border" />
+            <svg viewBox="0 0 20 20" fill="none" className="h-3 w-3 shrink-0">
+                <path
+                    d="M7.5 5L12.5 10L7.5 15"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </svg>
+        </span>
+    );
+}
+
 export default function Methodology() {
     return (
         <section id="methodology" className="scroll-mt-20 border-t border-border py-16">
@@ -37,11 +54,14 @@ export default function Methodology() {
                 </p>
 
                 <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                    {steps.map((step) => (
+                    {steps.map((step, index) => (
                         <div key={step.number}>
-                            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-subtle text-sm font-semibold text-primary">
-                                {step.number}
-                            </span>
+                            <div className="flex items-center">
+                                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-sm font-semibold text-primary">
+                                    {step.number}
+                                </span>
+                                {index < steps.length - 1 && <PipelineArrow />}
+                            </div>
                             <h3 className="mt-4 text-lg font-semibold text-foreground">{step.title}</h3>
                             <p className="mt-2 text-sm text-muted-foreground">{step.description}</p>
                         </div>
