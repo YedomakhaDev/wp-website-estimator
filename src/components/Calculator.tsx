@@ -144,6 +144,9 @@ export default function Calculator() {
     const tabStripRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
+    const dragState = useRef<{ startX: number; startScrollLeft: number } | null>(null);
+    const hasDraggedRef = useRef(false);
+    const [isDragging, setIsDragging] = useState(false);
 
     function setAnswer(questionId: string, value: AnswerValue) {
         setAnswers((previous) => ({ ...previous, [questionId]: value }));
@@ -164,6 +167,50 @@ export default function Calculator() {
         const step = visibleSteps[index];
         if (step) setCurrentStepId(step.id);
     }
+
+    function handleTabClick(index: number) {
+        // A drag ending on top of a tab still fires a click — swallow that one
+        // click so dragging past a tab doesn't also jump to it.
+        if (hasDraggedRef.current) {
+            hasDraggedRef.current = false;
+            return;
+        }
+        goTo(index);
+    }
+
+    function handleStripMouseDown(event: React.MouseEvent) {
+        const strip = tabStripRef.current;
+        if (!strip || event.button !== 0) return;
+        dragState.current = { startX: event.clientX, startScrollLeft: strip.scrollLeft };
+        hasDraggedRef.current = false;
+        setIsDragging(true);
+    }
+
+    useEffect(() => {
+        if (!isDragging) return;
+
+        const DRAG_THRESHOLD_PX = 5;
+
+        function handleMouseMove(event: MouseEvent) {
+            const strip = tabStripRef.current;
+            if (!strip || !dragState.current) return;
+            const delta = event.clientX - dragState.current.startX;
+            if (Math.abs(delta) > DRAG_THRESHOLD_PX) hasDraggedRef.current = true;
+            strip.scrollLeft = dragState.current.startScrollLeft - delta;
+        }
+
+        function handleMouseUp() {
+            dragState.current = null;
+            setIsDragging(false);
+        }
+
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mouseup", handleMouseUp);
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, [isDragging]);
 
     useEffect(() => {
         tabRefs.current[currentStepId]?.scrollIntoView({
@@ -216,7 +263,10 @@ export default function Calculator() {
                 <div className="relative mt-6 -mx-6 border-b border-border">
                     <div
                         ref={tabStripRef}
-                        className="flex gap-6 overflow-x-auto scroll-smooth px-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        onMouseDown={handleStripMouseDown}
+                        className={`flex select-none gap-6 overflow-x-auto px-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+                            isDragging ? "cursor-grabbing" : "cursor-grab"
+                        }`}
                     >
                         {visibleSteps.map((step, index) => {
                             const status = getStepStatus(step, answers, index === currentIndex);
@@ -228,7 +278,7 @@ export default function Calculator() {
                                         tabRefs.current[step.id] = el;
                                     }}
                                     type="button"
-                                    onClick={() => goTo(index)}
+                                    onClick={() => handleTabClick(index)}
                                     className={`shrink-0 whitespace-nowrap border-b-2 pb-3 text-sm font-medium ${
                                         status === "current"
                                             ? "border-primary text-foreground"
