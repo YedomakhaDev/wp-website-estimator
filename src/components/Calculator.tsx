@@ -444,11 +444,14 @@ export default function Calculator() {
                             </button>
                             <button
                                 type="button"
-                                disabled={currentIndex === visibleSteps.length - 1}
-                                onClick={() => goTo(currentIndex + 1)}
+                                onClick={() =>
+                                    currentIndex === visibleSteps.length - 1
+                                        ? estimatePanelRef.current?.scrollIntoView({ behavior: "smooth" })
+                                        : goTo(currentIndex + 1)
+                                }
                                 className="rounded-control bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-40"
                             >
-                                Continue
+                                {currentIndex === visibleSteps.length - 1 ? "View estimate" : "Continue"}
                             </button>
                         </div>
                     </>
@@ -505,6 +508,28 @@ export default function Calculator() {
                             </div>
                         )}
 
+                        <div className="border-t border-border pt-4">
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-muted-foreground">Scope confidence:</span>
+                                <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary">
+                                    {result.estimate.confidenceLevel}
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                    (risk reserve {Math.round(result.estimate.riskReservePercent)}%)
+                                </span>
+                            </div>
+                            <p className="mt-1 text-xs text-muted-foreground">
+                                Reflects how well-defined your answers are, not a guarantee of the hour range&apos;s
+                                accuracy.
+                            </p>
+                        </div>
+
+                        {result.estimate.discoveryRecommendation && (
+                            <div className="rounded-control border border-warning/30 bg-warning-subtle p-3 text-sm text-warning">
+                                {result.estimate.discoveryRecommendation.message}
+                            </div>
+                        )}
+
                         <div className="divide-y divide-border rounded-control border border-border text-sm">
                             {result.estimate.workstreamBreakdown.map((item) => (
                                 <div key={item.id} className="flex justify-between px-3 py-2">
@@ -514,34 +539,22 @@ export default function Calculator() {
                             ))}
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm text-muted-foreground">Scope confidence:</span>
-                            <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary">
-                                {result.estimate.confidenceLevel}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                                (risk reserve {Math.round(result.estimate.riskReservePercent)}%)
-                            </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                            Reflects how well-defined your answers are, not a guarantee of the hour range&apos;s
-                            accuracy.
-                        </p>
-
-                        {result.estimate.discoveryRecommendation && (
-                            <div className="rounded-control border border-warning/30 bg-warning-subtle p-3 text-sm text-warning">
-                                {result.estimate.discoveryRecommendation.message}
-                            </div>
-                        )}
-
-                        <div>
-                            <p className="text-sm font-medium text-foreground">Assumptions</p>
+                        <details className="group">
+                            <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium text-foreground">
+                                <span>Assumptions ({result.estimate.assumptions.length})</span>
+                                <span className="text-xs font-normal text-muted-foreground group-open:hidden">
+                                    View assumptions ▸
+                                </span>
+                                <span className="hidden text-xs font-normal text-muted-foreground group-open:inline">
+                                    Hide ▾
+                                </span>
+                            </summary>
                             <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
                                 {result.estimate.assumptions.map((assumption) => (
                                     <li key={assumption}>{assumption}</li>
                                 ))}
                             </ul>
-                        </div>
+                        </details>
                     </>
                 )}
             </div>
