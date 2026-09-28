@@ -141,6 +141,9 @@ export default function Calculator() {
     const [hourlyRate, setHourlyRate] = useState<number | "">("");
     const [currentStepId, setCurrentStepId] = useState<string>(steps[0].id);
     const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+    const tabStripRef = useRef<HTMLDivElement>(null);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(false);
 
     function setAnswer(questionId: string, value: AnswerValue) {
         setAnswers((previous) => ({ ...previous, [questionId]: value }));
@@ -170,6 +173,29 @@ export default function Calculator() {
         });
     }, [currentStepId]);
 
+    useEffect(() => {
+        const strip = tabStripRef.current;
+        if (!strip) return;
+
+        function updateScrollButtons() {
+            if (!strip) return;
+            setCanScrollLeft(strip.scrollLeft > 0);
+            setCanScrollRight(strip.scrollLeft + strip.clientWidth < strip.scrollWidth - 1);
+        }
+
+        updateScrollButtons();
+        strip.addEventListener("scroll", updateScrollButtons, { passive: true });
+        window.addEventListener("resize", updateScrollButtons);
+        return () => {
+            strip.removeEventListener("scroll", updateScrollButtons);
+            window.removeEventListener("resize", updateScrollButtons);
+        };
+    }, [visibleSteps.length]);
+
+    function scrollTabs(direction: "left" | "right") {
+        tabStripRef.current?.scrollBy({ left: direction === "left" ? -240 : 240, behavior: "smooth" });
+    }
+
     return (
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
             <div className="min-w-0 rounded-card border border-border bg-surface p-6 shadow-sm">
@@ -187,33 +213,82 @@ export default function Calculator() {
                     />
                 </div>
 
-                <div className="-mx-6 mt-6 flex gap-6 overflow-x-auto border-b border-border px-6">
-                    {visibleSteps.map((step, index) => {
-                        const status = getStepStatus(step, answers, index === currentIndex);
+                <div className="relative mt-6 -mx-6 border-b border-border">
+                    <div
+                        ref={tabStripRef}
+                        className="flex gap-6 overflow-x-auto scroll-smooth px-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                    >
+                        {visibleSteps.map((step, index) => {
+                            const status = getStepStatus(step, answers, index === currentIndex);
 
-                        return (
+                            return (
+                                <button
+                                    key={step.id}
+                                    ref={(el) => {
+                                        tabRefs.current[step.id] = el;
+                                    }}
+                                    type="button"
+                                    onClick={() => goTo(index)}
+                                    className={`shrink-0 whitespace-nowrap border-b-2 pb-3 text-sm font-medium ${
+                                        status === "current"
+                                            ? "border-primary text-foreground"
+                                            : status === "upcoming"
+                                              ? "border-transparent text-muted-foreground"
+                                              : "border-transparent text-foreground"
+                                    }`}
+                                >
+                                    <span className="mr-1.5 text-xs font-semibold text-muted-foreground">
+                                        {String(index + 1).padStart(2, "0")}
+                                    </span>
+                                    {step.title}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    {canScrollLeft && (
+                        <>
+                            <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-surface to-transparent" />
                             <button
-                                key={step.id}
-                                ref={(el) => {
-                                    tabRefs.current[step.id] = el;
-                                }}
                                 type="button"
-                                onClick={() => goTo(index)}
-                                className={`shrink-0 whitespace-nowrap border-b-2 pb-3 text-sm font-medium ${
-                                    status === "current"
-                                        ? "border-primary text-foreground"
-                                        : status === "upcoming"
-                                          ? "border-transparent text-muted-foreground"
-                                          : "border-transparent text-foreground"
-                                }`}
+                                onClick={() => scrollTabs("left")}
+                                aria-label="Scroll tabs left"
+                                className="absolute left-0 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground shadow-sm hover:text-foreground"
                             >
-                                <span className="mr-1.5 text-xs font-semibold text-muted-foreground">
-                                    {String(index + 1).padStart(2, "0")}
-                                </span>
-                                {step.title}
+                                <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5">
+                                    <path
+                                        d="M12.5 15L7.5 10L12.5 5"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
                             </button>
-                        );
-                    })}
+                        </>
+                    )}
+
+                    {canScrollRight && (
+                        <>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-surface to-transparent" />
+                            <button
+                                type="button"
+                                onClick={() => scrollTabs("right")}
+                                aria-label="Scroll tabs right"
+                                className="absolute right-0 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground shadow-sm hover:text-foreground"
+                            >
+                                <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5">
+                                    <path
+                                        d="M7.5 5L12.5 10L7.5 15"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </>
+                    )}
                 </div>
 
                 {currentStep && (
