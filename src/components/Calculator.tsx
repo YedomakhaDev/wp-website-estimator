@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     applyHourlyRate,
     calculateEstimate,
@@ -140,6 +140,7 @@ export default function Calculator() {
     const [answers, setAnswers] = useState<AnswerMap>({});
     const [hourlyRate, setHourlyRate] = useState<number | "">("");
     const [currentStepId, setCurrentStepId] = useState<string>(steps[0].id);
+    const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
     function setAnswer(questionId: string, value: AnswerValue) {
         setAnswers((previous) => ({ ...previous, [questionId]: value }));
@@ -161,70 +162,63 @@ export default function Calculator() {
         if (step) setCurrentStepId(step.id);
     }
 
-    return (
-        <div className="grid gap-6 lg:grid-cols-[260px_1fr_320px]">
-            <nav className="space-y-1">
-                {visibleSteps.map((step, index) => {
-                    const status = getStepStatus(step, answers, index === currentIndex);
+    useEffect(() => {
+        tabRefs.current[currentStepId]?.scrollIntoView({
+            behavior: "smooth",
+            inline: "center",
+            block: "nearest",
+        });
+    }, [currentStepId]);
 
-                    return (
-                        <button
-                            key={step.id}
-                            type="button"
-                            onClick={() => goTo(index)}
-                            className={`flex w-full items-center gap-3 rounded-control px-3 py-2 text-left ${
-                                status === "current" ? "bg-primary-subtle" : ""
-                            }`}
-                        >
-                            <span
-                                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
-                                    status === "completed"
-                                        ? "bg-success-subtle text-success"
-                                        : status === "current"
-                                          ? "bg-primary text-primary-foreground"
-                                          : "bg-border text-muted-foreground"
+    return (
+        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+            <div className="min-w-0 rounded-card border border-border bg-surface p-6 shadow-sm">
+                <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-foreground">
+                        Step {currentIndex + 1} of {visibleSteps.length}
+                    </p>
+                    <p className="text-sm font-medium text-muted-foreground">{progressPercent}% complete</p>
+                </div>
+
+                <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
+                    <div
+                        className="h-full rounded-full bg-primary transition-all"
+                        style={{ width: `${progressPercent}%` }}
+                    />
+                </div>
+
+                <div className="-mx-6 mt-6 flex gap-6 overflow-x-auto border-b border-border px-6">
+                    {visibleSteps.map((step, index) => {
+                        const status = getStepStatus(step, answers, index === currentIndex);
+
+                        return (
+                            <button
+                                key={step.id}
+                                ref={(el) => {
+                                    tabRefs.current[step.id] = el;
+                                }}
+                                type="button"
+                                onClick={() => goTo(index)}
+                                className={`shrink-0 whitespace-nowrap border-b-2 pb-3 text-sm font-medium ${
+                                    status === "current"
+                                        ? "border-primary text-foreground"
+                                        : status === "upcoming"
+                                          ? "border-transparent text-muted-foreground"
+                                          : "border-transparent text-foreground"
                                 }`}
                             >
-                                {status === "completed" ? "✓" : index + 1}
-                            </span>
-                            <span>
-                                <span
-                                    className={`block text-sm font-medium ${
-                                        status === "upcoming" ? "text-muted-foreground" : "text-foreground"
-                                    }`}
-                                >
-                                    {step.title}
+                                <span className="mr-1.5 text-xs font-semibold text-muted-foreground">
+                                    {String(index + 1).padStart(2, "0")}
                                 </span>
-                                <span className="block text-xs text-muted-foreground">
-                                    {status === "completed"
-                                        ? "Completed"
-                                        : status === "current"
-                                          ? "In progress"
-                                          : "Not started"}
-                                </span>
-                            </span>
-                        </button>
-                    );
-                })}
-            </nav>
-
-            <div className="rounded-card border border-border bg-surface p-6 shadow-sm">
-                <div className="mb-6">
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
-                        <div
-                            className="h-full rounded-full bg-primary transition-all"
-                            style={{ width: `${progressPercent}%` }}
-                        />
-                    </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{progressPercent}% complete</p>
+                                {step.title}
+                            </button>
+                        );
+                    })}
                 </div>
 
                 {currentStep && (
                     <>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-                            Step {currentIndex + 1}
-                        </p>
-                        <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
+                        <h2 className="mt-6 text-2xl font-bold tracking-tight text-foreground">
                             {currentStep.title}
                         </h2>
 
