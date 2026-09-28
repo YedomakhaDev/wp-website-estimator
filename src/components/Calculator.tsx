@@ -6,6 +6,7 @@ import {
     calculateEstimate,
     getQuestionnaireProgress,
     isStepComplete,
+    isStepStarted,
     isStepVisible,
     isVisible,
 } from "@/lib/calculator";
@@ -23,41 +24,28 @@ function formatCostRange(range: { min: number; max: number }): string {
     return `$${format(range.min)}–${format(range.max)}`;
 }
 
-type StepStatus = "completed" | "current" | "upcoming";
+type StepStatus = "completed" | "in-progress" | "not-started";
 
+// A step counts as "in progress" once it's either the one currently open, or
+// has at least one answer already — so filling something in and switching
+// tabs doesn't make it look untouched again.
 function getStepStatus(step: Step, answers: AnswerMap, isCurrent: boolean): StepStatus {
     if (isStepComplete(step, answers)) return "completed";
-    return isCurrent ? "current" : "upcoming";
+    if (isCurrent || isStepStarted(step, answers)) return "in-progress";
+    return "not-started";
 }
 
-function StepStatusIcon({ status }: { status: StepStatus }) {
-    if (status === "completed") {
-        return (
-            <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 shrink-0 text-success">
-                <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
-                <path
-                    d="M6 10.5L8.5 13L14 7.5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
-        );
-    }
-
-    if (status === "current") {
-        return (
-            <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 shrink-0 text-primary">
-                <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
-                <circle cx="10" cy="10" r="3.5" fill="currentColor" />
-            </svg>
-        );
-    }
-
+function CompletedIcon() {
     return (
-        <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 shrink-0 text-border">
+        <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 shrink-0 text-success">
             <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
+            <path
+                d="M6 10.5L8.5 13L14 7.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
         </svg>
     );
 }
@@ -314,7 +302,8 @@ export default function Calculator() {
                         }`}
                     >
                         {visibleSteps.map((step, index) => {
-                            const status = getStepStatus(step, answers, index === currentIndex);
+                            const isActiveTab = index === currentIndex;
+                            const status = getStepStatus(step, answers, isActiveTab);
 
                             return (
                                 <button
@@ -325,9 +314,9 @@ export default function Calculator() {
                                     type="button"
                                     onClick={() => handleTabClick(index)}
                                     className={`shrink-0 cursor-pointer whitespace-nowrap border-b-2 py-3 text-left text-sm font-medium ${
-                                        status === "current"
+                                        isActiveTab
                                             ? "border-primary text-foreground"
-                                            : status === "upcoming"
+                                            : status === "not-started"
                                               ? "border-transparent text-muted-foreground"
                                               : "border-transparent text-foreground"
                                     }`}
@@ -342,15 +331,15 @@ export default function Calculator() {
                                         className={`flex items-center gap-1 text-xs font-normal ${
                                             status === "completed"
                                                 ? "text-success"
-                                                : status === "current"
+                                                : status === "in-progress"
                                                   ? "text-primary"
                                                   : "text-muted-foreground"
                                         }`}
                                     >
-                                        <StepStatusIcon status={status} />
+                                        {status === "completed" && <CompletedIcon />}
                                         {status === "completed"
                                             ? "Completed"
-                                            : status === "current"
+                                            : status === "in-progress"
                                               ? "In progress"
                                               : "Not started"}
                                     </span>

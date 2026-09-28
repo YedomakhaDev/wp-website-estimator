@@ -179,6 +179,13 @@ export function isStepComplete(step: Step, answers: AnswerMap): boolean {
     return visibleQuestions.every((question) => isQuestionAnswered(question, answers));
 }
 
+// Distinct from isStepComplete: true as soon as one visible question has an
+// answer, so a step you partially filled and navigated away from still shows
+// as "in progress" instead of reverting to "not started".
+export function isStepStarted(step: Step, answers: AnswerMap): boolean {
+    return step.questions.some((question) => isVisible(question, answers) && isQuestionAnswered(question, answers));
+}
+
 export function getQuestionnaireProgress(steps: Step[], answers: AnswerMap): { answered: number; total: number } {
     let answered = 0;
     let total = 0;
