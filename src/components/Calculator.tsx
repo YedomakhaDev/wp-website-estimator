@@ -169,6 +169,8 @@ export default function Calculator() {
     const dragState = useRef<{ startX: number; startScrollLeft: number } | null>(null);
     const hasDraggedRef = useRef(false);
     const [isDragging, setIsDragging] = useState(false);
+    const estimatePanelRef = useRef<HTMLDivElement>(null);
+    const [canStick, setCanStick] = useState(true);
 
     function setAnswer(questionId: string, value: AnswerValue) {
         setAnswers((previous) => ({ ...previous, [questionId]: value }));
@@ -261,28 +263,45 @@ export default function Calculator() {
         };
     }, [visibleSteps.length]);
 
+    // Only stick the estimate panel while it's short enough to fit the viewport —
+    // a sticky panel taller than the screen would clip its own bottom instead of
+    // just scrolling normally with the page.
+    useEffect(() => {
+        const panel = estimatePanelRef.current;
+        if (!panel) return;
+
+        const STICKY_OFFSET_PX = 32;
+
+        function updateCanStick() {
+            if (!panel) return;
+            setCanStick(panel.offsetHeight <= window.innerHeight - STICKY_OFFSET_PX);
+        }
+
+        updateCanStick();
+
+        const resizeObserver = new ResizeObserver(updateCanStick);
+        resizeObserver.observe(panel);
+        window.addEventListener("resize", updateCanStick);
+
+        return () => {
+            resizeObserver.disconnect();
+            window.removeEventListener("resize", updateCanStick);
+        };
+    }, []);
+
     function scrollTabs(direction: "left" | "right") {
         tabStripRef.current?.scrollBy({ left: direction === "left" ? -240 : 240, behavior: "smooth" });
     }
 
     return (
-        <div className="space-y-6">
+        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
             <div className="min-w-0 rounded-card border border-border bg-surface p-6 shadow-sm">
                 <div className="-mx-6 -mt-6 rounded-t-card bg-surface px-6 pb-3 pt-6">
                     <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
                         <p className="text-sm font-semibold text-foreground">
                             Step {currentIndex + 1} of {visibleSteps.length}
                         </p>
-                        <div className="flex items-center gap-3">
-                            <p className="text-sm font-medium text-muted-foreground">
-                                {progressPercent}% complete
-                            </p>
-                            {result.status === "ok" && (
-                                <span className="rounded-full bg-primary-subtle px-2.5 py-1 text-xs font-semibold text-primary">
-                                    {formatRange(result.estimate.totalHours)}
-                                </span>
-                            )}
-                        </div>
+                        <p className="text-sm font-medium text-muted-foreground">{progressPercent}% complete</p>
                     </div>
 
                     <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
@@ -436,7 +455,12 @@ export default function Calculator() {
                 )}
             </div>
 
-            <div className="space-y-4 rounded-card border border-border bg-surface p-6 shadow-sm">
+            <div
+                ref={estimatePanelRef}
+                className={`h-fit space-y-4 rounded-card border border-border bg-surface p-6 shadow-sm ${
+                    canStick ? "lg:sticky lg:top-4" : ""
+                }`}
+            >
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     Preliminary estimate
                 </p>
