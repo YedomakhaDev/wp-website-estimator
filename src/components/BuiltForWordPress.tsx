@@ -34,11 +34,11 @@ export default function BuiltForWordPress() {
                     Covers the technical areas that matter in modern WordPress projects.
                 </p>
 
-                <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {capabilities.map((capability) => (
                         <div
                             key={capability.title}
-                            className="rounded-control border border-border bg-surface p-4"
+                            className="rounded-control border border-border bg-surface p-5"
                         >
                             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-subtle text-primary">
                                 <CapabilityIcon />
