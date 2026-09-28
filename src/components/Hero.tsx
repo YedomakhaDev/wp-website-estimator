@@ -8,8 +8,8 @@ const badges = [
         description: "Structured rules, not AI — identical answers always give the same result.",
     },
     {
-        title: "No account required",
-        description: "Works entirely in your browser. Nothing is saved or sent anywhere.",
+        title: "Transparent breakdown",
+        description: "See exactly where every part of the estimate comes from.",
     },
 ];
 
@@ -40,12 +40,15 @@ export default function Hero() {
                 Scope the project step by step and get an hours range, workstream breakdown, QA/PM allowances, a
                 risk reserve and the assumptions behind it.
             </p>
-            <a
-                href="#calculator"
-                className="mt-8 inline-block rounded-control bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground"
-            >
-                Start estimate
-            </a>
+            <div className="mt-8 flex items-center gap-4">
+                <a
+                    href="#calculator"
+                    className="inline-block rounded-control bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground"
+                >
+                    Start estimate
+                </a>
+                <span className="text-xs text-muted-foreground">No account required.</span>
+            </div>
 
             <div className="mt-10 grid gap-6 sm:grid-cols-3">
                 {badges.map((badge) => (
