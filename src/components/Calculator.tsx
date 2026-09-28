@@ -71,43 +71,30 @@ function QuestionField({
 
             <div className={optionsContainerClass}>
                 {question.type === "single-choice" &&
-                    question.options.map((option, index) => {
-                        // An odd option count leaves the last card alone in its row with a
-                        // dangling empty half — span it across both columns instead.
-                        const isTrailingOrphan =
-                            index === question.options.length - 1 && question.options.length % 2 !== 0;
-
-                        return (
-                            <label
-                                key={option.value}
-                                className={`flex items-center gap-2 rounded-control border border-border px-3 py-2 text-sm text-foreground has-[:checked]:border-primary has-[:checked]:bg-primary-subtle ${
-                                    isTrailingOrphan ? "sm:col-span-2" : ""
-                                }`}
-                            >
-                                <input
-                                    type="radio"
-                                    name={question.id}
-                                    checked={value === option.value}
-                                    onChange={() => onChange(option.value)}
-                                />
-                                {option.label}
-                            </label>
-                        );
-                    })}
+                    question.options.map((option) => (
+                        <label
+                            key={option.value}
+                            className="flex items-center gap-2 rounded-control border border-border px-3 py-2 text-sm text-foreground has-[:checked]:border-primary has-[:checked]:bg-primary-subtle"
+                        >
+                            <input
+                                type="radio"
+                                name={question.id}
+                                checked={value === option.value}
+                                onChange={() => onChange(option.value)}
+                            />
+                            {option.label}
+                        </label>
+                    ))}
 
                 {question.type === "multi-choice" &&
-                    question.options.map((option, index) => {
+                    question.options.map((option) => {
                         const selected = Array.isArray(value) ? value : [];
                         const isChecked = selected.includes(option.value);
-                        const isTrailingOrphan =
-                            index === question.options.length - 1 && question.options.length % 2 !== 0;
 
                         return (
                             <label
                                 key={option.value}
-                                className={`flex items-center gap-2 rounded-control border border-border px-3 py-2 text-sm text-foreground has-[:checked]:border-primary has-[:checked]:bg-primary-subtle ${
-                                    isTrailingOrphan ? "sm:col-span-2" : ""
-                                }`}
+                                className="flex items-center gap-2 rounded-control border border-border px-3 py-2 text-sm text-foreground has-[:checked]:border-primary has-[:checked]:bg-primary-subtle"
                             >
                                 <input
                                     type="checkbox"
