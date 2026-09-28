@@ -433,15 +433,15 @@ export function calculateEstimate(steps: Step[], answers: AnswerMap): Calculatio
     const frontendFinal = buildFrontendFinal(state, answers);
 
     const devLineItems: WorkstreamHours[] = [
-        { id: "frontend", label: "Frontend", hours: frontendFinal },
-        { id: "cms", label: "CMS & data", hours: state.buckets.cms },
-        { id: "functionality", label: "Functionality", hours: state.buckets.functionality },
-        { id: "woo", label: "WooCommerce", hours: state.buckets.woo },
-        { id: "booking", label: "Booking", hours: state.buckets.booking },
-        { id: "integrations", label: "Integrations", hours: state.buckets.integrations },
-        { id: "i18n", label: "Multilingual", hours: state.buckets.i18n },
-        { id: "content", label: "Content & migration", hours: state.buckets.content },
-        { id: "seoQuality", label: "SEO, analytics & quality", hours: state.buckets.seoQuality },
+        { id: "frontend", label: "Frontend", hours: frontendFinal, group: "development" },
+        { id: "cms", label: "CMS & data", hours: state.buckets.cms, group: "development" },
+        { id: "functionality", label: "Functionality", hours: state.buckets.functionality, group: "development" },
+        { id: "woo", label: "WooCommerce", hours: state.buckets.woo, group: "development" },
+        { id: "booking", label: "Booking", hours: state.buckets.booking, group: "development" },
+        { id: "integrations", label: "Integrations", hours: state.buckets.integrations, group: "development" },
+        { id: "i18n", label: "Multilingual", hours: state.buckets.i18n, group: "development" },
+        { id: "content", label: "Content & migration", hours: state.buckets.content, group: "development" },
+        { id: "seoQuality", label: "SEO, analytics & quality", hours: state.buckets.seoQuality, group: "development" },
     ];
 
     let devSubtotal = devLineItems.reduce((total, item) => addRange(total, item.hours), ZERO);
@@ -472,11 +472,11 @@ export function calculateEstimate(steps: Step[], answers: AnswerMap): Calculatio
 
     const workstreamBreakdown: WorkstreamHours[] = [
         ...devLineItems,
-        { id: "qa", label: "QA & fixes", hours: qaHours },
-        { id: "pm", label: "PM & communication", hours: pmHours },
-        { id: "deployment", label: "Deployment", hours: deploymentHours },
-        { id: "docs", label: "Documentation", hours: docsHours },
-        { id: "riskReserve", label: "Risk reserve", hours: riskReserveHours },
+        { id: "qa", label: "QA & fixes", hours: qaHours, group: "allowances" },
+        { id: "pm", label: "PM & communication", hours: pmHours, group: "allowances" },
+        { id: "deployment", label: "Deployment", hours: deploymentHours, group: "allowances" },
+        { id: "docs", label: "Documentation", hours: docsHours, group: "allowances" },
+        { id: "riskReserve", label: "Risk reserve", hours: riskReserveHours, group: "allowances" },
     ];
 
     const estimate: EstimateResult = {

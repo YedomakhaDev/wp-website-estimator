@@ -83,6 +83,8 @@ function QuestionField({
     onChange: (value: AnswerValue) => void;
 }) {
     const optionsContainerClass = "mt-2 grid gap-2 sm:grid-cols-2";
+    const optionLabelClass =
+        "flex cursor-pointer items-center gap-2 rounded-control border border-border px-3 py-2 text-sm text-foreground transition-colors hover:border-primary/50 hover:bg-primary-subtle/50 has-[:checked]:border-primary has-[:checked]:bg-primary-subtle has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary has-[:focus-visible]:ring-offset-1";
 
     return (
         <fieldset className="border-0 p-0">
@@ -91,10 +93,7 @@ function QuestionField({
             <div className={optionsContainerClass}>
                 {question.type === "single-choice" &&
                     question.options.map((option) => (
-                        <label
-                            key={option.value}
-                            className="flex items-center gap-2 rounded-control border border-border px-3 py-2 text-sm text-foreground has-[:checked]:border-primary has-[:checked]:bg-primary-subtle"
-                        >
+                        <label key={option.value} className={optionLabelClass}>
                             <input
                                 type="radio"
                                 name={question.id}
@@ -111,10 +110,7 @@ function QuestionField({
                         const isChecked = selected.includes(option.value);
 
                         return (
-                            <label
-                                key={option.value}
-                                className="flex items-center gap-2 rounded-control border border-border px-3 py-2 text-sm text-foreground has-[:checked]:border-primary has-[:checked]:bg-primary-subtle"
-                            >
+                            <label key={option.value} className={optionLabelClass}>
                                 <input
                                     type="checkbox"
                                     checked={isChecked}
@@ -294,7 +290,7 @@ export default function Calculator() {
     }
 
     return (
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="grid items-start gap-6 lg:grid-cols-[1fr_320px]">
             <div className="min-w-0 rounded-card border border-border bg-surface p-6 shadow-sm">
                 <div className="-mx-6 -mt-6 rounded-t-card bg-surface px-6 pb-3 pt-6">
                     <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
@@ -505,19 +501,21 @@ export default function Calculator() {
                         </div>
 
                         <div className="space-y-2 border-t border-border pt-6">
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm text-muted-foreground">Scope confidence:</span>
-                                <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary">
-                                    {result.estimate.confidenceLevel}
-                                </span>
-                                <span className="text-xs text-muted-foreground">
-                                    (risk reserve {Math.round(result.estimate.riskReservePercent)}%)
-                                </span>
+                            <div className="space-y-2 rounded-control bg-background p-3">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-muted-foreground">Scope confidence:</span>
+                                    <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary">
+                                        {result.estimate.confidenceLevel}
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">
+                                        (risk reserve {Math.round(result.estimate.riskReservePercent)}%)
+                                    </span>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                    Reflects how well-defined your answers are, not a guarantee of the hour
+                                    range&apos;s accuracy.
+                                </p>
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                                Reflects how well-defined your answers are, not a guarantee of the hour range&apos;s
-                                accuracy.
-                            </p>
 
                             {result.estimate.discoveryRecommendation && (
                                 <div className="rounded-control border border-warning/30 bg-warning-subtle p-3 text-sm text-warning">
@@ -526,28 +524,57 @@ export default function Calculator() {
                             )}
                         </div>
 
-                        <div className="border-t border-border pt-6">
-                            <div className="divide-y divide-border rounded-control border border-border text-sm">
-                                {result.estimate.workstreamBreakdown
-                                    .filter((item) => item.hours.min > 0 || item.hours.max > 0)
-                                    .map((item) => (
-                                        <div key={item.id} className="flex justify-between px-3 py-2">
-                                            <span className="text-foreground">{item.label}</span>
-                                            <span className="text-muted-foreground">{formatRange(item.hours)}</span>
-                                        </div>
-                                    ))}
+                        <div className="space-y-4 border-t border-border pt-6 text-sm">
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                    Development
+                                </p>
+                                <div className="mt-2 space-y-1.5">
+                                    {result.estimate.workstreamBreakdown
+                                        .filter(
+                                            (item) =>
+                                                item.group === "development" &&
+                                                (item.hours.min > 0 || item.hours.max > 0),
+                                        )
+                                        .map((item) => (
+                                            <div key={item.id} className="flex justify-between">
+                                                <span className="text-foreground">{item.label}</span>
+                                                <span className="text-muted-foreground">
+                                                    {formatRange(item.hours)}
+                                                </span>
+                                            </div>
+                                        ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                    Project allowances
+                                </p>
+                                <div className="mt-2 space-y-1.5">
+                                    {result.estimate.workstreamBreakdown
+                                        .filter(
+                                            (item) =>
+                                                item.group === "allowances" &&
+                                                (item.hours.min > 0 || item.hours.max > 0),
+                                        )
+                                        .map((item) => (
+                                            <div key={item.id} className="flex justify-between">
+                                                <span className="text-foreground">{item.label}</span>
+                                                <span className="text-muted-foreground">
+                                                    {formatRange(item.hours)}
+                                                </span>
+                                            </div>
+                                        ))}
+                                </div>
                             </div>
                         </div>
 
                         <details className="group border-t border-border pt-6">
                             <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium text-foreground">
                                 <span>Assumptions ({result.estimate.assumptions.length})</span>
-                                <span className="text-xs font-normal text-muted-foreground group-open:hidden">
-                                    View assumptions ▸
-                                </span>
-                                <span className="hidden text-xs font-normal text-muted-foreground group-open:inline">
-                                    Hide ▾
-                                </span>
+                                <span className="text-muted-foreground group-open:hidden">▸</span>
+                                <span className="hidden text-muted-foreground group-open:inline">▾</span>
                             </summary>
                             <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
                                 {result.estimate.assumptions.map((assumption) => (

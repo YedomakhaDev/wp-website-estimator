@@ -106,6 +106,7 @@ export type WorkstreamHours = {
     id: string;
     label: string;
     hours: HourRange;
+    group: "development" | "allowances";
 };
 
 export type DiscoveryRecommendation = {
