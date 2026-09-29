@@ -12,7 +12,7 @@ import {
 } from "@/lib/calculator";
 import Modal from "@/components/Modal";
 import { steps } from "@/lib/questions";
-import { AnswerMap, AnswerValue, HourRange, Question, Step } from "@/lib/types";
+import { AnswerMap, AnswerValue, HourRange, Question, Step, WorkstreamHours } from "@/lib/types";
 
 function formatRange(range: { min: number; max: number }): string {
     if (range.min === range.max) return `${Math.round(range.min)}h`;
@@ -532,51 +532,57 @@ export default function Calculator() {
                             )}
                         </div>
 
-                        <div className="space-y-4 border-t border-border pt-6 text-sm">
-                            <div>
-                                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                    Development
-                                </p>
-                                <div className="mt-2 space-y-1.5">
-                                    {result.estimate.workstreamBreakdown
-                                        .filter(
-                                            (item) =>
-                                                item.group === "development" &&
-                                                (item.hours.min > 0 || item.hours.max > 0),
-                                        )
-                                        .map((item) => (
-                                            <div key={item.id} className="flex justify-between">
-                                                <span className="text-foreground">{item.label}</span>
-                                                <span className="text-muted-foreground">
-                                                    {formatRange(item.hours)}
-                                                </span>
-                                            </div>
-                                        ))}
-                                </div>
-                            </div>
+                        {(() => {
+                            const nonZero = (item: WorkstreamHours) => item.hours.min > 0 || item.hours.max > 0;
+                            const development = result.estimate.workstreamBreakdown.filter(
+                                (item) => item.group === "development" && nonZero(item),
+                            );
+                            const allowances = result.estimate.workstreamBreakdown.filter(
+                                (item) => item.group === "allowances" && nonZero(item),
+                            );
 
-                            <div>
-                                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                    Project allowances
-                                </p>
-                                <div className="mt-2 space-y-1.5">
-                                    {result.estimate.workstreamBreakdown
-                                        .filter(
-                                            (item) =>
-                                                item.group === "allowances" &&
-                                                (item.hours.min > 0 || item.hours.max > 0),
-                                        )
-                                        .map((item) => (
-                                            <div key={item.id} className="flex justify-between">
-                                                <span className="text-foreground">{item.label}</span>
-                                                <span className="text-muted-foreground">
-                                                    {formatRange(item.hours)}
-                                                </span>
+                            if (development.length === 0 && allowances.length === 0) return null;
+
+                            return (
+                                <div className="space-y-4 border-t border-border pt-6 text-sm">
+                                    {development.length > 0 && (
+                                        <div>
+                                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                                Development
+                                            </p>
+                                            <div className="mt-2 space-y-1.5">
+                                                {development.map((item) => (
+                                                    <div key={item.id} className="flex justify-between">
+                                                        <span className="text-foreground">{item.label}</span>
+                                                        <span className="text-muted-foreground">
+                                                            {formatRange(item.hours)}
+                                                        </span>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
+                                        </div>
+                                    )}
+
+                                    {allowances.length > 0 && (
+                                        <div>
+                                            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                                Project allowances
+                                            </p>
+                                            <div className="mt-2 space-y-1.5">
+                                                {allowances.map((item) => (
+                                                    <div key={item.id} className="flex justify-between">
+                                                        <span className="text-foreground">{item.label}</span>
+                                                        <span className="text-muted-foreground">
+                                                            {formatRange(item.hours)}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
-                        </div>
+                            );
+                        })()}
 
                         {result.estimate.assumptions.length > 0 && (
                             <>

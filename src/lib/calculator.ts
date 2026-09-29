@@ -32,7 +32,9 @@ export function applyHourlyRate(hours: HourRange, rate: number): HourRange {
 }
 
 // Global components (header, footer, nav, base styles) are billed on every
-// project regardless of answers, so they are a constant rather than an effect.
+// project once at least one question has been answered — it's a constant
+// rather than an effect, but it shouldn't appear before the questionnaire has
+// actually started (an untouched form should read as 0h, not a hidden floor).
 const FRONTEND_COMPONENTS_BASE: HourRange = { min: 12, max: 16 };
 
 // Multi-select / count-based risk categories cap their total contribution
@@ -216,7 +218,7 @@ function getMultiplier(
 function emptyBuckets(): Record<Bucket, HourRange> {
     return {
         buildSetup: ZERO,
-        frontendComponents: FRONTEND_COMPONENTS_BASE,
+        frontendComponents: ZERO,
         frontendBlocks: ZERO,
         frontendTemplates: ZERO,
         frontendHeader: ZERO,
@@ -417,6 +419,11 @@ export function calculateEstimate(steps: Step[], answers: AnswerMap): Calculatio
 
     if (state.stop) {
         return { status: "stop", message: state.stop };
+    }
+
+    if (Object.keys(answers).length > 0) {
+        state.buckets.frontendComponents = addRange(state.buckets.frontendComponents, FRONTEND_COMPONENTS_BASE);
+        state.assumptions.push("Frontend — Base theme setup (header, footer, nav, base styles): included");
     }
 
     applyAutomaticBases(state, answers);
