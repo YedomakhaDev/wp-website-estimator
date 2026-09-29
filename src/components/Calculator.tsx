@@ -342,16 +342,22 @@ export default function Calculator() {
                                         </span>
                                         {step.title}
                                     </span>
-                                    {status !== "not-started" && (
-                                        <span
-                                            className={`flex items-center gap-1 text-xs font-normal ${
-                                                status === "completed" ? "text-success" : "text-primary"
-                                            }`}
-                                        >
-                                            {status === "completed" && <CompletedIcon />}
-                                            {status === "completed" ? "Completed" : "In progress"}
-                                        </span>
-                                    )}
+                                    <span
+                                        className={`flex items-center gap-1 text-xs font-normal ${
+                                            status === "completed"
+                                                ? "text-success"
+                                                : status === "in-progress"
+                                                  ? "text-primary"
+                                                  : "text-muted-foreground"
+                                        }`}
+                                    >
+                                        {status === "completed" && <CompletedIcon />}
+                                        {status === "completed"
+                                            ? "Completed"
+                                            : status === "in-progress"
+                                              ? "In progress"
+                                              : "Not started"}
+                                    </span>
                                 </button>
                             );
                         })}
