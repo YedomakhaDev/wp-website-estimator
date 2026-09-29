@@ -372,7 +372,7 @@ export default function Calculator() {
                                 type="button"
                                 onClick={() => scrollTabs("left")}
                                 aria-label="Scroll tabs left"
-                                className="absolute left-6 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground shadow-sm hover:text-foreground"
+                                className="absolute left-6 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-border bg-surface text-muted-foreground shadow-sm hover:text-foreground"
                             >
                                 <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5">
                                     <path
@@ -394,7 +394,7 @@ export default function Calculator() {
                                 type="button"
                                 onClick={() => scrollTabs("right")}
                                 aria-label="Scroll tabs right"
-                                className="absolute right-6 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground shadow-sm hover:text-foreground"
+                                className="absolute right-6 top-1/2 flex h-6 w-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-border bg-surface text-muted-foreground shadow-sm hover:text-foreground"
                             >
                                 <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5">
                                     <path
