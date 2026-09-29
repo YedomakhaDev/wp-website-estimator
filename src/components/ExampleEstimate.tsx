@@ -74,7 +74,7 @@ export default function ExampleEstimate() {
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                             Estimated effort
                         </p>
-                        <p className="mt-2 text-5xl font-bold tracking-tight text-foreground">200–298h</p>
+                        <p className="mt-2 text-[41px] font-bold tracking-tight text-foreground">200–298h</p>
                         <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">$20,000–$29,800</p>
                         <p className="text-xs text-muted-foreground">at $100/h</p>
 
