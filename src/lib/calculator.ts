@@ -15,6 +15,13 @@ import {
     WorkstreamHours,
 } from "./types";
 
+// Bump this whenever a change here would shift numbers for the same answers
+// (a new base, a different multiplier, a reserve formula tweak). There's no
+// persistence yet, so nothing reads this today — it just gives future
+// "save this estimate" work a version to snapshot against, instead of
+// silently recalculating old client estimates whenever the formula changes.
+export const CALCULATOR_VERSION = "1.0";
+
 const ZERO: HourRange = { min: 0, max: 0 };
 
 function addRange(a: HourRange, b: HourRange): HourRange {
