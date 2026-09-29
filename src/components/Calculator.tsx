@@ -508,29 +508,31 @@ export default function Calculator() {
                             )}
                         </div>
 
-                        <div className="space-y-2 border-t border-border pt-6">
-                            <div className="space-y-2 rounded-control bg-background p-3">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm text-muted-foreground">Scope confidence:</span>
-                                    <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary">
-                                        {result.estimate.confidenceLevel}
-                                    </span>
+                        {Object.keys(answers).length > 0 && (
+                            <div className="space-y-2 border-t border-border pt-6">
+                                <div className="space-y-2 rounded-control bg-background p-3">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm text-muted-foreground">Scope confidence:</span>
+                                        <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary">
+                                            {result.estimate.confidenceLevel}
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        Risk reserve: {Math.round(result.estimate.riskReservePercent)}%
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        Reflects how well-defined your answers are, not a guarantee of the hour
+                                        range&apos;s accuracy.
+                                    </p>
                                 </div>
-                                <p className="text-xs text-muted-foreground">
-                                    Risk reserve: {Math.round(result.estimate.riskReservePercent)}%
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                    Reflects how well-defined your answers are, not a guarantee of the hour
-                                    range&apos;s accuracy.
-                                </p>
-                            </div>
 
-                            {result.estimate.discoveryRecommendation && (
-                                <div className="rounded-control border border-warning/30 bg-warning-subtle p-3 text-sm text-warning">
-                                    {result.estimate.discoveryRecommendation.message}
-                                </div>
-                            )}
-                        </div>
+                                {result.estimate.discoveryRecommendation && (
+                                    <div className="rounded-control border border-warning/30 bg-warning-subtle p-3 text-sm text-warning">
+                                        {result.estimate.discoveryRecommendation.message}
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {(() => {
                             const nonZero = (item: WorkstreamHours) => item.hours.min > 0 || item.hours.max > 0;
