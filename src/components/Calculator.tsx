@@ -578,14 +578,16 @@ export default function Calculator() {
                             </div>
                         </div>
 
-                        <button
-                            type="button"
-                            onClick={() => setAreAssumptionsOpen(true)}
-                            className="flex w-full cursor-pointer items-center justify-between border-t border-border pt-6 text-sm font-medium text-foreground"
-                        >
-                            <span>Assumptions ({result.estimate.assumptions.length})</span>
-                            <span className="text-muted-foreground">▸</span>
-                        </button>
+                        {result.estimate.assumptions.length > 0 && (
+                            <button
+                                type="button"
+                                onClick={() => setAreAssumptionsOpen(true)}
+                                className="flex w-full cursor-pointer items-center justify-between border-t border-border pt-6 text-sm font-medium text-foreground"
+                            >
+                                <span>Assumptions ({result.estimate.assumptions.length})</span>
+                                <span className="text-muted-foreground">▸</span>
+                            </button>
+                        )}
 
                         <Modal
                             open={areAssumptionsOpen}
