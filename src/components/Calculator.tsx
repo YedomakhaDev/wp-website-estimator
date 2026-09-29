@@ -10,6 +10,7 @@ import {
     isStepVisible,
     isVisible,
 } from "@/lib/calculator";
+import Modal from "@/components/Modal";
 import { steps } from "@/lib/questions";
 import { AnswerMap, AnswerValue, HourRange, Question, Step } from "@/lib/types";
 
@@ -167,6 +168,7 @@ export default function Calculator() {
     const [isDragging, setIsDragging] = useState(false);
     const estimatePanelRef = useRef<HTMLDivElement>(null);
     const [canStick, setCanStick] = useState(true);
+    const [areAssumptionsOpen, setAreAssumptionsOpen] = useState(false);
 
     function setAnswer(questionId: string, value: AnswerValue) {
         setAnswers((previous) => ({ ...previous, [questionId]: value }));
@@ -576,18 +578,26 @@ export default function Calculator() {
                             </div>
                         </div>
 
-                        <details className="group border-t border-border pt-6">
-                            <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-medium text-foreground">
-                                <span>Assumptions ({result.estimate.assumptions.length})</span>
-                                <span className="text-muted-foreground group-open:hidden">▸</span>
-                                <span className="hidden text-muted-foreground group-open:inline">▾</span>
-                            </summary>
-                            <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                        <button
+                            type="button"
+                            onClick={() => setAreAssumptionsOpen(true)}
+                            className="flex w-full cursor-pointer items-center justify-between border-t border-border pt-6 text-sm font-medium text-foreground"
+                        >
+                            <span>Assumptions ({result.estimate.assumptions.length})</span>
+                            <span className="text-muted-foreground">▸</span>
+                        </button>
+
+                        <Modal
+                            open={areAssumptionsOpen}
+                            onClose={() => setAreAssumptionsOpen(false)}
+                            title={`Assumptions (${result.estimate.assumptions.length})`}
+                        >
+                            <ul className="space-y-2 text-sm text-muted-foreground">
                                 {result.estimate.assumptions.map((assumption) => (
                                     <li key={assumption}>{assumption}</li>
                                 ))}
                             </ul>
-                        </details>
+                        </Modal>
                     </>
                 )}
             </div>
