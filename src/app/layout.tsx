@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import { IS_LIVE } from "@/lib/site-content";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export const metadata: Metadata = {
     title,
     description,
   },
+  robots: IS_LIVE ? undefined : { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
