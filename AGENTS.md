@@ -56,6 +56,26 @@ Before implementing unfamiliar architecture:
 3. Implement in small reviewable steps.
 4. Do not generate the entire application at once.
 
+## Plans
+
+Вся информация по проекту лежит в `_plans/` (отдельный git-репозиторий, в основном репо в .gitignore).
+Начинай с `_plans/README.md` — там карта всех файлов.
+
+- Контекст проекта: `_plans/project/context.md`
+- Фичи: `_plans/features/<YYYY-MM-DD-slug>/` — перед работой над фичей прочитай её README.md, brief.md и open-questions.md
+- Как вести папку: `_plans/general-rules/plans-workflow.md`
+
+Правила, которым нужно следовать:
+- Коммиты: `_plans/general-rules/commits.md`
+- Ветки: `_plans/general-rules/branches.md`
+- Язык (код и всё для клиента — на английском): `_plans/general-rules/language.md`
+- Дизайн: `_plans/project/design/` — `tokens.md` источник правды для цветов, шрифтов и размеров; в макетах только утверждённые тексты
+
+При работе:
+- Новые решения записывай в decisions.md, новые вопросы — в open-questions.md (фичи или проекта).
+- Создал или удалил файл в `_plans/` — обнови `_plans/README.md`.
+- Прогресс по фиче отмечай в её tasks.md.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
