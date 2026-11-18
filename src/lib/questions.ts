@@ -778,7 +778,8 @@ export const steps: Step[] = [
                 id: "rtl",
                 label: "RTL languages",
                 type: "single-choice",
-                visibleIf: (answers) => answers.languages === "two" || answers.languages === "few" || answers.languages === "many",
+                visibleIf: (answers) =>
+                    answers.languages === "two" || answers.languages === "few" || answers.languages === "many",
                 options: [
                     { value: "no", label: "No" },
                     {

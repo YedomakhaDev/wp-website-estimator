@@ -124,6 +124,4 @@ export type EstimateResult = {
     estimatedCost?: HourRange;
 };
 
-export type CalculationResult =
-    | { status: "ok"; estimate: EstimateResult }
-    | { status: "stop"; message: string };
+export type CalculationResult = { status: "ok"; estimate: EstimateResult } | { status: "stop"; message: string };
