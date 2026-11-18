@@ -14,6 +14,7 @@ import {
     Step,
     WorkstreamHours,
 } from "./types";
+import { ASSUMPTIONS, DISCOVERY_MESSAGES } from "./messages";
 
 // Bump this whenever a change here would shift numbers for the same answers
 // (a new base, a different multiplier, a reserve formula tweak). There's no
@@ -54,6 +55,23 @@ const RISK_CATEGORY_CAPS: Record<string, number> = {
 const PM_BASE_PERCENT = 10;
 const PM_MAX_PERCENT = 25;
 const RESERVE_CAP_PERCENT = 35;
+
+// Risk reserve model: each axis starts at a base % and adds a calibrated amount
+// per risk point, then the two axes are summed and capped (RESERVE_CAP_PERCENT).
+// The per-point rates (15/14, 15/26) are calibration constants — see "Risk
+// model" in _plans/project/brief/level-mode-questionnaire.md.
+const RESERVE_BASE_PERCENT = 5;
+const READINESS_RESERVE_PER_POINT = 15 / 14;
+const EXECUTION_RESERVE_PER_POINT = 15 / 26;
+
+// Confidence bands by final reserve %: below HIGH_MAX → high, up to and
+// including MEDIUM_MAX → medium, above → low.
+const CONFIDENCE_HIGH_MAX_PERCENT = 15;
+const CONFIDENCE_MEDIUM_MAX_PERCENT = 25;
+
+// Risk points at which a paid discovery phase is recommended, per axis.
+const DISCOVERY_READINESS_THRESHOLD = 10;
+const DISCOVERY_EXECUTION_THRESHOLD = 15;
 
 const DESIGN_COMPLEXITY_MULTIPLIER: Record<string, number> = {
     standard: 1.0,
@@ -121,11 +139,11 @@ const BOOKING_BASE_HOURS: HourRange = { min: 20, max: 30 };
 function applyAutomaticBases(state: EngineState, answers: AnswerMap): void {
     if (answers.project_type === "woocommerce") {
         state.buckets.woo = addRange(state.buckets.woo, WOO_BASE_HOURS);
-        state.assumptions.push("WooCommerce — base store templates: included");
+        state.assumptions.push(ASSUMPTIONS.wooBaseTemplates);
     }
     if (answers.project_type === "booking") {
         state.buckets.booking = addRange(state.buckets.booking, BOOKING_BASE_HOURS);
-        state.assumptions.push("Booking — base booking engine: included");
+        state.assumptions.push(ASSUMPTIONS.bookingBaseEngine);
     }
 }
 
@@ -151,7 +169,7 @@ function applyIntegrationsDocsPenalty(state: EngineState, answers: AnswerMap): v
         state.buckets.integrations,
         addRange(scaleRange(apiHours, 0.5), INTEGRATION_DOCS_SPIKE),
     );
-    state.assumptions.push("Integrations — API docs are poor or unknown: +50% on API integrations, plus a discovery spike");
+    state.assumptions.push(ASSUMPTIONS.poorApiDocs);
 }
 
 // ACF and native Gutenberg builds get the full CMS/data step (including editor_flexibility);
@@ -394,29 +412,17 @@ function buildDiscoveryRecommendation(
     readinessPoints: number,
     executionPoints: number,
 ): DiscoveryRecommendation | null {
-    const readinessTriggered = readinessPoints >= 10;
-    const executionTriggered = executionPoints >= 15;
+    const readinessTriggered = readinessPoints >= DISCOVERY_READINESS_THRESHOLD;
+    const executionTriggered = executionPoints >= DISCOVERY_EXECUTION_THRESHOLD;
 
     if (readinessTriggered && executionTriggered) {
-        return {
-            reason: "both",
-            message:
-                "Requirements aren't settled and the project is technically complex — recommend a paid discovery phase before committing to a fixed estimate.",
-        };
+        return { reason: "both", message: DISCOVERY_MESSAGES.both };
     }
     if (readinessTriggered) {
-        return {
-            reason: "readiness",
-            message:
-                "Requirements, design or content aren't ready yet — recommend a paid discovery phase to reduce uncertainty before committing to a fixed estimate.",
-        };
+        return { reason: "readiness", message: DISCOVERY_MESSAGES.readiness };
     }
     if (executionTriggered) {
-        return {
-            reason: "execution",
-            message:
-                "This project has unusually high technical complexity — recommend a paid discovery phase to de-risk the estimate before committing to a fixed scope.",
-        };
+        return { reason: "execution", message: DISCOVERY_MESSAGES.execution };
     }
     return null;
 }
@@ -430,7 +436,7 @@ export function calculateEstimate(steps: Step[], answers: AnswerMap): Calculatio
 
     if (Object.keys(answers).length > 0) {
         state.buckets.frontendComponents = addRange(state.buckets.frontendComponents, FRONTEND_COMPONENTS_BASE);
-        state.assumptions.push("Frontend — Base theme setup (header, footer, nav, base styles): included");
+        state.assumptions.push(ASSUMPTIONS.baseThemeSetup);
     }
 
     applyAutomaticBases(state, answers);
@@ -441,7 +447,7 @@ export function calculateEstimate(steps: Step[], answers: AnswerMap): Calculatio
 
     if (needsOptionsPage(answers)) {
         state.buckets.cms = addRange(state.buckets.cms, OPTIONS_PAGE_HOURS);
-        state.assumptions.push("CMS & data — Options page: included (CPT or ACF present)");
+        state.assumptions.push(ASSUMPTIONS.optionsPage);
     }
 
     const frontendFinal = buildFrontendFinal(state, answers);
@@ -475,14 +481,19 @@ export function calculateEstimate(steps: Step[], answers: AnswerMap): Calculatio
     const readinessPoints = tallyRiskAxis(state.riskEntries, "readiness");
     const executionPoints = tallyRiskAxis(state.riskEntries, "execution");
 
-    const readinessReservePercent = 5 + readinessPoints * (15 / 14);
-    const executionReservePercent = 5 + executionPoints * (15 / 26);
+    const readinessReservePercent = RESERVE_BASE_PERCENT + readinessPoints * READINESS_RESERVE_PER_POINT;
+    const executionReservePercent = RESERVE_BASE_PERCENT + executionPoints * EXECUTION_RESERVE_PER_POINT;
     const reservePercent = Math.min(readinessReservePercent + executionReservePercent, RESERVE_CAP_PERCENT);
 
     const riskReserveHours = scaleRange(preReserveTotal, reservePercent / 100);
     const totalHours = addRange(preReserveTotal, riskReserveHours);
 
-    const confidenceLevel: ConfidenceLevel = reservePercent < 15 ? "high" : reservePercent <= 25 ? "medium" : "low";
+    const confidenceLevel: ConfidenceLevel =
+        reservePercent < CONFIDENCE_HIGH_MAX_PERCENT
+            ? "high"
+            : reservePercent <= CONFIDENCE_MEDIUM_MAX_PERCENT
+              ? "medium"
+              : "low";
 
     const workstreamBreakdown: WorkstreamHours[] = [
         ...devLineItems,
