@@ -2,7 +2,7 @@
 export type HourRange = { min: number; max: number };
 
 // The two independent sources of uncertainty the risk model tracks.
-// See _plans/1790251989_level-mode-questionnaire.md -> "Risk model".
+// See _plans/project/brief/level-mode-questionnaire.md -> "Risk model".
 export type RiskAxis = "readiness" | "execution";
 
 export type RiskContribution = {

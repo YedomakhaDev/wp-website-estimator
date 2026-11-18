@@ -2,7 +2,7 @@ import { blockPriceFor, isFullCmsBuild } from "./calculator";
 import { Step } from "./types";
 
 // Level-mode questionnaire. Steps are added incrementally —
-// see _plans/1790251989_level-mode-questionnaire.md for the full plan.
+// see _plans/project/brief/level-mode-questionnaire.md for the full plan.
 export const steps: Step[] = [
     {
         id: "project",
