@@ -1,51 +1,23 @@
-const steps = [
-    {
-        number: "01",
-        title: "Scope",
-        description:
-            "Your answers add base hours to individual workstreams — frontend, CMS, functionality, integrations and more.",
-    },
-    {
-        number: "02",
-        title: "Allowances",
-        description: "QA & fixes, PM & communication, deployment and documentation are added on top, scaled to the project.",
-    },
-    {
-        number: "03",
-        title: "Risk",
-        description: "Unclear requirements and technical complexity contribute to a risk reserve and a scope confidence level.",
-    },
-    {
-        number: "04",
-        title: "Result",
-        description: "You get an hours range, a full workstream breakdown, the assumptions behind it, and an optional cost.",
-    },
-];
+import { ChevronRightIcon } from "@/assets/icons/ChevronRightIcon";
+import { Eyebrow } from "@/components/base/Eyebrow";
+import { Container } from "@/common/Container";
+
+import { steps } from "./mock";
 
 function PipelineArrow() {
     return (
         <span aria-hidden className="ml-2 hidden flex-1 items-center gap-1 text-border lg:flex">
             <span className="h-px flex-1 bg-border" />
-            <svg viewBox="0 0 20 20" fill="none" className="h-3 w-3 shrink-0">
-                <path
-                    d="M7.5 5L12.5 10L7.5 15"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
+            <ChevronRightIcon className="h-3 w-3 shrink-0" />
         </span>
     );
 }
 
-export default function Methodology() {
+export function MethodologySection() {
     return (
         <section id="methodology" className="scroll-mt-20 border-t border-border py-16">
-            <div className="mx-auto max-w-content px-6">
-                <p className="text-center text-sm font-medium uppercase tracking-wide text-primary">
-                    Methodology
-                </p>
+            <Container>
+                <Eyebrow className="text-center">Methodology</Eyebrow>
                 <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-foreground">
                     How the estimate is built
                 </h2>
@@ -67,7 +39,7 @@ export default function Methodology() {
                         </div>
                     ))}
                 </div>
-            </div>
+            </Container>
         </section>
     );
 }

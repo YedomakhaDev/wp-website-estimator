@@ -1,24 +1,25 @@
-import BuiltForWordPress from "@/components/BuiltForWordPress";
-import Calculator from "@/components/Calculator";
-import ExampleEstimate from "@/components/ExampleEstimate";
-import Faq from "@/components/Faq";
-import Hero from "@/components/Hero";
-import Methodology from "@/components/Methodology";
+import { BuiltForWordPressSection } from "@/components/sections/BuiltForWordPressSection";
+import { EstimatorSection } from "@/components/sections/EstimatorSection";
+import { ExampleEstimateSection } from "@/components/sections/ExampleEstimateSection";
+import { FaqSection } from "@/components/sections/FaqSection";
+import { HeroSection } from "@/components/sections/HeroSection";
+import { MethodologySection } from "@/components/sections/MethodologySection";
+import { Container } from "@/common/Container";
 
 export default function Home() {
     return (
-        <div className="min-h-full">
-            <main className="mx-auto max-w-content px-6">
-                <Hero />
+        <main className="min-h-full">
+            <Container>
+                <HeroSection />
                 <div id="calculator" className="pb-16">
-                    <Calculator />
+                    <EstimatorSection />
                 </div>
-            </main>
+            </Container>
 
-            <Methodology />
-            <BuiltForWordPress />
-            <ExampleEstimate />
-            <Faq />
-        </div>
+            <MethodologySection />
+            <BuiltForWordPressSection />
+            <ExampleEstimateSection />
+            <FaqSection />
+        </main>
     );
 }

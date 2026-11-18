@@ -1,28 +1,13 @@
-// Real output from Scenario A in scripts/scenarios.ts — re-run that script after
-// touching calculator.ts/questions.ts and update these numbers if they drift.
-// The headline total (200–298h) is the engine's actual sum, not a re-sum of the
-// rows below — independently rounded rows can be off by ~1h from the total,
-// same as the live product, so we don't force them to match artificially.
+import Link from "next/link";
 
-type BreakdownItem = { label: string; min: number; max: number };
+import { Badge } from "@/components/base/Badge";
+import { Button } from "@/components/base/Button";
+import { Card } from "@/components/base/Card";
+import { Eyebrow } from "@/components/base/Eyebrow";
+import { ProgressBar } from "@/components/base/ProgressBar";
+import { Container } from "@/common/Container";
 
-const development: BreakdownItem[] = [
-    { label: "Frontend", min: 97, max: 135 },
-    { label: "CMS & data", min: 11, max: 19 },
-    { label: "Functionality", min: 4, max: 8 },
-    { label: "Integrations", min: 3, max: 6 },
-    { label: "SEO, analytics & quality", min: 11, max: 17 },
-];
-
-const allowances: BreakdownItem[] = [
-    { label: "QA & fixes", min: 32, max: 46 },
-    { label: "PM & communication", min: 16, max: 24 },
-    { label: "Deployment", min: 4, max: 8 },
-    { label: "Documentation", min: 2, max: 6 },
-    { label: "Risk reserve", min: 19, max: 28 },
-];
-
-const chips = ["Corporate website", "Custom design", "ACF build", "1 integration"];
+import { allowances, type BreakdownItem, chips, development } from "./mock";
 
 const maxMidpoint = Math.max(...[...development, ...allowances].map((item) => (item.min + item.max) / 2));
 
@@ -33,12 +18,11 @@ function BreakdownRow({ item, tone }: { item: BreakdownItem; tone: "primary" | "
     return (
         <div className="flex items-center gap-3 py-1.5">
             <span className="w-40 shrink-0 text-sm text-foreground">{item.label}</span>
-            <div className="h-2 flex-1 overflow-hidden rounded-full bg-border">
-                <div
-                    className={`h-full rounded-full ${tone === "primary" ? "bg-primary" : "bg-muted-foreground/50"}`}
-                    style={{ width: `${percent}%` }}
-                />
-            </div>
+            <ProgressBar
+                value={percent}
+                className="h-2 flex-1"
+                barClassName={tone === "primary" ? undefined : "bg-muted-foreground/50"}
+            />
             <span className="w-16 shrink-0 text-right text-sm text-muted-foreground">
                 {item.min}–{item.max}h
             </span>
@@ -46,11 +30,11 @@ function BreakdownRow({ item, tone }: { item: BreakdownItem; tone: "primary" | "
     );
 }
 
-export default function ExampleEstimate() {
+export function ExampleEstimateSection() {
     return (
         <section id="example" className="scroll-mt-20 border-t border-border py-16">
-            <div className="mx-auto max-w-content px-6">
-                <p className="text-sm font-medium uppercase tracking-wide text-primary">Example estimate</p>
+            <Container>
+                <Eyebrow>Example estimate</Eyebrow>
                 <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
                     See what a complete estimate looks like
                 </h2>
@@ -60,17 +44,14 @@ export default function ExampleEstimate() {
 
                 <div className="mt-5 flex flex-wrap gap-2">
                     {chips.map((chip) => (
-                        <span
-                            key={chip}
-                            className="rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-foreground"
-                        >
+                        <Badge key={chip} variant="outline">
                             {chip}
-                        </span>
+                        </Badge>
                     ))}
                 </div>
 
                 <div className="mt-10 grid gap-6 lg:grid-cols-[280px_1fr]">
-                    <div className="h-fit rounded-card border border-border bg-surface p-6 shadow-sm">
+                    <Card className="h-fit">
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                             Estimated effort
                         </p>
@@ -79,21 +60,16 @@ export default function ExampleEstimate() {
                         <p className="text-xs text-muted-foreground">at $100/h</p>
 
                         <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border pt-4">
-                            <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs font-medium text-primary">
-                                High confidence
-                            </span>
+                            <Badge>High confidence</Badge>
                             <span className="text-xs text-muted-foreground">Risk reserve 11%</span>
                         </div>
 
-                        <a
-                            href="#calculator"
-                            className="mt-4 block rounded-control bg-primary px-4 py-2 text-center text-sm font-medium text-primary-foreground"
-                        >
-                            Try your own estimate
-                        </a>
-                    </div>
+                        <Button asChild className="mt-4 w-full">
+                            <Link href="#calculator">Try your own estimate</Link>
+                        </Button>
+                    </Card>
 
-                    <div className="rounded-card border border-border bg-surface p-6 shadow-sm">
+                    <Card>
                         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                             Workstream breakdown
                         </p>
@@ -111,9 +87,9 @@ export default function ExampleEstimate() {
                                 <BreakdownRow key={item.label} item={item} tone="muted" />
                             ))}
                         </div>
-                    </div>
+                    </Card>
                 </div>
-            </div>
+            </Container>
         </section>
     );
 }

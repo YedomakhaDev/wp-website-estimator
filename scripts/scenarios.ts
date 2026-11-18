@@ -203,18 +203,8 @@ const scenarioD_everythingMaxed: Scenario = {
         cicd: "yes",
         qa_level: "strict",
         revision_rounds: "three_plus",
-        communication: [
-            "slow_feedback_or_timezones",
-            "more_than_two_stakeholders",
-            "regular_calls",
-            "jira_reports",
-        ],
-        risk_factors: [
-            "fixed_deadline",
-            "multiple_decision_makers",
-            "parallel_devs",
-            "third_party_dependency",
-        ],
+        communication: ["slow_feedback_or_timezones", "more_than_two_stakeholders", "regular_calls", "jira_reports"],
+        risk_factors: ["fixed_deadline", "multiple_decision_makers", "parallel_devs", "third_party_dependency"],
         docs_level: "full_training",
     },
 };
@@ -386,8 +376,14 @@ for (const scenario of scenarios) {
         continue;
     }
 
-    const { workstreamBreakdown, totalHours, riskReservePercent, confidenceLevel, discoveryRecommendation, assumptions } =
-        result.estimate;
+    const {
+        workstreamBreakdown,
+        totalHours,
+        riskReservePercent,
+        confidenceLevel,
+        discoveryRecommendation,
+        assumptions,
+    } = result.estimate;
 
     console.log("\nBreakdown:");
     for (const item of workstreamBreakdown) {

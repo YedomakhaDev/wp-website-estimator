@@ -2,6 +2,8 @@
 
 import { useEffect, useId, useRef } from "react";
 
+import { CloseIcon } from "@/assets/icons/CloseIcon";
+
 // Built on native <dialog> instead of a hand-rolled overlay: showModal() gives
 // us focus trapping, Escape-to-close, and top-layer stacking for free, with
 // zero dependencies. The one thing we still do ourselves is lock background
@@ -13,7 +15,7 @@ type ModalProps = {
     children: React.ReactNode;
 };
 
-export default function Modal({ open, onClose, title, children }: ModalProps) {
+export function Modal({ open, onClose, title, children }: ModalProps) {
     const dialogRef = useRef<HTMLDialogElement>(null);
     const titleId = useId();
 
@@ -72,14 +74,7 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
                         aria-label="Close"
                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-background hover:text-foreground"
                     >
-                        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
-                            <path
-                                d="M5 5L15 15M15 5L5 15"
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                            />
-                        </svg>
+                        <CloseIcon className="h-4 w-4" />
                     </button>
                 </div>
                 <div className="mt-4">{children}</div>
