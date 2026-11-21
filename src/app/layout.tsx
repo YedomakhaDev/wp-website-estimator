@@ -33,6 +33,9 @@ export const metadata: Metadata = {
         description,
     },
     robots: IS_LIVE ? undefined : { index: false, follow: false },
+    verification: {
+        google: "pOGdmfqBpry4XsVRZNKYGCKQ0TCO_89Hkp2BqrgDius",
+    },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
